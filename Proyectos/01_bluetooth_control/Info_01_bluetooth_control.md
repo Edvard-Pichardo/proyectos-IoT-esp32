@@ -65,6 +65,7 @@ framework = arduino
 lib_deps = 
     adafruit/DHT sensor library@^1.4.4
 monitor_speed = 115200
+```
 
 ## Explicación del Código
 
