@@ -1,6 +1,6 @@
 # Proyectos IoT - ESP32
 
-Descripción:
+## Descripción:
 
 Este repositorio documenta el desarrollo de cinco sistemas IoT implementados con un microcontrolador ESP32 DevKit V1 como parte del curso Introducción al Internet de las Cosas. Cada proyecto explora un paradigma distinto de comunicación y control de dispositivos físicos.
 
