@@ -65,3 +65,84 @@ framework = arduino
 lib_deps = 
     adafruit/DHT sensor library@^1.4.4
 monitor_speed = 115200
+
+## Explicación del Código
+
+El código está organizado en varias secciones:
+
+1. Inclusión de librerías y definiciones de pines: Se definen los pines para LEDs, pulsadores y el sensor DHT, así como un array con los LEDs para facilitar el control.
+
+2. Configuración de Bluetooth: Se crea un objeto BluetoothSerial con el nombre "ESP32_EPichardo". Se registra una función callback_function que maneja los eventos de conexión y los datos recibidos.
+
+3. Manejo de comandos por Bluetooth:
+
+- Cuando se recibe un byte, se interpreta su valor ASCII.
+
+- Si es '1' (ASCII 49) se enciende LED1, '2' para LED2, etc.
+
+- Si es '0' (ASCII 48) se apagan todos los LEDs.
+
+- Cualquier otro carácter envía un mensaje de error.
+
+4. Lectura de sensores con pulsadores:
+
+- En el loop() se monitorean los dos botones.
+
+- Al presionar SW1 se lee la temperatura en grados Celsius y Fahrenheit y se envía por Bluetooth.
+
+- Al presionar SW2 se lee la humedad y se envía por Bluetooth.
+
+- Se utiliza un anti-rebote simple con millis() para evitar múltiples lecturas.
+
+- Función callback: Se encarga de imprimir en el monitor serie los eventos de Bluetooth y de procesar los datos entrantes.
+
+## Instrucciones de Uso
+
+- Alimenta el ESP32 (por USB o fuente externa).
+
+- Abre el monitor serie (115200 baudios) para ver mensajes de depuración.
+
+- Empareja tu dispositivo (smartphone, PC) con el Bluetooth llamado "Nombre_dispositivo".
+
+- Usa una aplicación de terminal Bluetooth (por ejemplo, "Serial Bluetooth Terminal" en Android) para conectarte al ESP32.
+
+- Envía comandos:
+
+1 -> Enciende LED1
+
+2 -> Enciende LED2
+
+3 -> Enciende LED3
+
+4 -> Enciende LED4
+
+5 -> Enciende LED5
+
+0 -> Apaga todos los LEDs
+
+- Presiona los botones físicos:
+
+- - SW1: Envía la temperatura actual (°C y °F).
+
+- - SW2: Envía la humedad actual (%).
+
+Verás las lecturas en la terminal Bluetooth.
+
+## Posibles Mejoras
+
+- Implementar un sistema de autenticación para evitar conexiones no deseadas.
+
+- Añadir control de brillo PWM para los LEDs.
+
+- Integrar con un broker MQTT para convertir el proyecto en IoT completo.
+
+- Usar una aplicación móvil personalizada con botones gráficos.
+
+- Almacenar lecturas en una tarjeta SD o enviarlas a la nube.
+
+## Autor
+
+Nombre: Pichardo Rico Cristian Eduardo
+
+Licencia
+Este proyecto está bajo la licencia MIT. Puedes ver el archivo LICENSE para más detalles.
