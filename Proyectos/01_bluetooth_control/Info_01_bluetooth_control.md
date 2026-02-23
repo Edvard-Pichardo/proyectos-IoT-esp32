@@ -53,20 +53,6 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 3. Selecciona la placa **ESP32 Dev Module** y el puerto COM correspondiente.
 4. Copia el código proporcionado y súbelo a tu ESP32.
 
-### PlatformIO
-
-Si usas PlatformIO, crea un nuevo proyecto para la placa `espressif32` y añade las siguientes dependencias en el archivo `platformio.ini`:
-
-```ini
-[env:esp32dev]
-platform = espressif32
-board = esp32dev
-framework = arduino
-lib_deps = 
-    adafruit/DHT sensor library@^1.4.4
-monitor_speed = 115200
-```
-
 ## Explicación del Código
 
 El código está organizado en varias secciones:
