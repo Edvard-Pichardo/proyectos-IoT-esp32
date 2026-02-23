@@ -13,7 +13,7 @@ Este repositorio documenta el desarrollo de cinco sistemas IoT implementados con
 - Actuadores (LEDs, relés, buzzer)
 
 <p align="center">
-<img src="media/PinMapEsp32IoT.jpeg" width="400">
+<img src="media/PinMapEsp32IoT.jpg" width="400">
 </p>
 
 ## Proyectos incluidos
