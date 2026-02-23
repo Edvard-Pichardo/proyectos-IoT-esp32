@@ -2,7 +2,7 @@
 
 ![ESP32](https://img.shields.io/badge/ESP32-Desarrollo-blue) ![Bluetooth](https://img.shields.io/badge/Bluetooth-SPP-green) ![DHT11](https://img.shields.io/badge/Sensor-DHT11-orange)
 
-## Descripción General
+## Descripción General 
 
 En esta práctica se implementa un sistema de control y monitoreo utilizando un **ESP32** que se comunica vía **Bluetooth** con un dispositivo externo (como un smartphone o computadora). 
 
