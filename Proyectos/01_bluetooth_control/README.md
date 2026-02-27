@@ -43,9 +43,10 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 **Nota:** Para SW2 se utiliza la resistencia pull-up interna del ESP32, por lo que no se requiere resistor externo; el pin se conecta directamente a GND cuando se presiona.
 
 <p align="center">
-<img src="media/Conexion_bluetooth.jpeg" width="200">
-<img src="media/ESP32_utilizado.jpeg" width="200">
-<img src="media/Monitor_Serie_ArduinoIDE.png" width="200">
+   <img src="media/Conexion_bluetooth.jpeg" width="200">
+   <img src="media/ESP32_utilizado.jpeg" width="200">
+   <br>
+   <em>Figura: Montaje físico del programa</em>
 </p>
 
 ## Configuración del Entorno
@@ -89,6 +90,12 @@ El código está organizado en varias secciones:
 
 - Función callback: Se encarga de imprimir en el monitor serie los eventos de Bluetooth y de procesar los datos entrantes.
 
+<p align="center">
+   <img src="media/Monitor_Serie_ArduinoIDE.png" width="300">
+   <br>
+   <em>Figura: Respuestas del monitor serie del IDe de Arduino</em>
+</p>
+
 ## Instrucciones de Uso
 
 - Alimenta el ESP32 (por USB o fuente externa).
@@ -122,7 +129,9 @@ El código está organizado en varias secciones:
 Verás las lecturas en la terminal Bluetooth.
 
 <p align="center">
-<img src="media/Prueba_funcionamiento.jpeg" width="400">
+   <img src="media/Prueba_funcionamiento.jpeg" width="400">
+   <br>
+   <em>Figura: Funcionamiento del sistema</em>
 </p>
 
 ## Posibles Mejoras
