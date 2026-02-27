@@ -1,4 +1,4 @@
-# Proyecto IoT 1: Control Bluetooth con ESP32 y Sensor DHT11
+# Proyecto IoT: Control Bluetooth con ESP32 y Sensor DHT11
 
 ![ESP32](https://img.shields.io/badge/ESP32-Desarrollo-blue) ![Bluetooth](https://img.shields.io/badge/Bluetooth-SPP-green) ![DHT11](https://img.shields.io/badge/Sensor-DHT11-orange)
 
