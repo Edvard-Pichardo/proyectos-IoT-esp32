@@ -120,7 +120,7 @@ El código está organizado en varias secciones:
 Verás las lecturas en la terminal Bluetooth.
 
 <p align="center">
-<img src="Proyectos/01_bluetooth_control/media/Prueba_funcionamiento.jpeg" width="600">
+<img src="media/Prueba_funcionamiento.jpeg" width="600">
 </p>
 
 ## Posibles Mejoras
