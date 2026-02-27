@@ -23,7 +23,14 @@ El código está desarrollado en el entorno de Arduino (compatible con PlatformI
 | Resistencias de 220Ω     | 5        | Para limitar corriente en los LEDs              |
 | Pulsadores (push buttons)| 2        | Uno con pull-down, otro con pull-up interno     |
 | Resistor 10kΩ (para SW1) | 1        | Solo necesario si se usa pull-down externo      |
-| Protoboard y cables      | -        | Para realizar las conexiones                     |
+| Protoboard y cables      | -        | Para realizar las conexiones                    |
+
+<p align="center">
+   <img src="media/Conexion_bluetooth.jpeg" width="200">
+   <img src="media/ESP32_utilizado.jpeg" width="200">
+   <br>
+   <em>Figura: Montaje físico del programa</em>
+</p>
 
 ## Diagrama de Conexiones
 
@@ -41,13 +48,6 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 | Sensor DHT11    | GPIO 32       | VCC a 3.3V, GND a GND, Data al pin 32                          |
 
 **Nota:** Para SW2 se utiliza la resistencia pull-up interna del ESP32, por lo que no se requiere resistor externo; el pin se conecta directamente a GND cuando se presiona.
-
-<p align="center">
-   <img src="media/Conexion_bluetooth.jpeg" width="200">
-   <img src="media/ESP32_utilizado.jpeg" width="200">
-   <br>
-   <em>Figura: Montaje físico del programa</em>
-</p>
 
 ## Configuración del Entorno
 
@@ -91,7 +91,7 @@ El código está organizado en varias secciones:
 - Función callback: Se encarga de imprimir en el monitor serie los eventos de Bluetooth y de procesar los datos entrantes.
 
 <p align="center">
-   <img src="media/Monitor_Serie_ArduinoIDE.png" width="300">
+   <img src="media/Monitor_Serie_ArduinoIDE.png" width="400">
    <br>
    <em>Figura: Respuestas del monitor serie del IDe de Arduino</em>
 </p>
@@ -129,6 +129,7 @@ El código está organizado en varias secciones:
 Verás las lecturas en la terminal Bluetooth.
 
 <p align="center">
+   <img src="media/Serial_Bluetooth_Terminal.jpeg" width="400">
    <img src="media/Prueba_funcionamiento.jpeg" width="400">
    <br>
    <em>Figura: Funcionamiento del sistema</em>
