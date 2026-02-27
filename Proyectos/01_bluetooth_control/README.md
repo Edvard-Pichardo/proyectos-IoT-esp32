@@ -91,7 +91,7 @@ El código está organizado en varias secciones:
 - Función callback: Se encarga de imprimir en el monitor serie los eventos de Bluetooth y de procesar los datos entrantes.
 
 <p align="center">
-   <img src="media/Monitor_Serie_ArduinoIDE.png" width="600">
+   <img src="media/Monitor_Serie_ArduinoIDE.png" width="800">
    <br>
    <em>Figura: Respuestas del monitor serie del IDe de Arduino</em>
 </p>
