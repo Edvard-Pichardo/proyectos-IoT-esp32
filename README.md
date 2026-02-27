@@ -1,5 +1,7 @@
 # Proyectos IoT - ESP32
 
+![ESP32](https://img.shields.io/badge/ESP32-Desarrollo-blue) ![Bluetooth](https://img.shields.io/badge/Bluetooth-SPP-green) ![DHT11](https://img.shields.io/badge/Sensor-DHT11-orange)
+
 ## Descripción
 
 Este repositorio documenta el desarrollo de cinco sistemas IoT implementados con un microcontrolador ESP32 DevKit V1 como parte del curso Introducción al Internet de las Cosas. Cada proyecto explora un paradigma distinto de comunicación y control de dispositivos físicos.
