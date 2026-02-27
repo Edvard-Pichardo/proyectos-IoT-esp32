@@ -45,7 +45,7 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 <p align="center">
 <img src="media/Conexion_bluetooth.jpeg" width="200">
 <img src="media/ESP32_utilizado.jpeg" width="200">
-<img src="media/Monitor_Serie_ArduinoIDE.jpeg" width="200">
+<img src="media/Monitor_Serie_ArduinoIDE.png" width="200">
 </p>
 
 ## Configuración del Entorno
