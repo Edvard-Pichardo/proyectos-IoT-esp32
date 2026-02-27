@@ -13,7 +13,7 @@
   Conexiones:
   - LEDs: GPIO 14, 27, 26, 25, 33 (con resistencias 220Ω a GND)
   - SW1: GPIO 15 (pull-down externo de 10kΩ a GND, conmutador a VCC)
-  - SW2: GPIO 4 (pull-up interno, conmutador a GND)
+  - SW2: GPIO 4 (pull-up externo de 10kΩ a VCC, conmutador a GND)
   - DHT11: GPIO 32 (VCC 3.3V, GND, Data)
 */
 
@@ -180,3 +180,4 @@ void loop() {
     }
   }
 }
+
