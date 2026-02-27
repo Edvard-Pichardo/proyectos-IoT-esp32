@@ -43,7 +43,7 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 **Nota:** Para SW2 se utiliza la resistencia pull-up interna del ESP32, por lo que no se requiere resistor externo; el pin se conecta directamente a GND cuando se presiona.
 
 <p align="center">
-<img src="Proyectos/01_bluetooth_control/media/Conexion_bluetooth.jpeg" width="600">
+<img src="media/Conexion_bluetooth.jpeg" width="600">
 </p>
 
 ## Configuración del Entorno
