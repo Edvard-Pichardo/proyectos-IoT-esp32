@@ -78,8 +78,8 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 6. Abre el código principal (el archivo `.ino`), ajusta las credenciales WiFi y súbelo a la placa.
 
 <p align="center">
-   <img src="media/carpetas.png" width="350">
-   <img src="media/sketch_data.png" width="350">
+   <img src="media/carpetas.png" width="450">
+   <img src="media/sketch_data.png" width="450">
    <br>
    <em>Figura: Preparación de archivos</em>
 </p>
