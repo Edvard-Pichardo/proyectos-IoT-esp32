@@ -71,23 +71,22 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 4. Prepara los archivos web:
    - Crea una carpeta llamada `data` dentro de la carpeta de tu sketch.
    - Coloca dentro los archivos `index.html`, `style.css` y `script.js`.
-5. Sube los archivos a SPIFFS:
-   - Conecta tu ESP32.
-   - En el menú "Herramientas", selecciona el puerto correcto.
-   - Haz clic en **Herramientas > ESP32 Sketch Data Upload**. Esto subirá los archivos a la memoria flash del ESP32.
-6. Abre el código principal (el archivo `.ino`), ajusta las credenciales WiFi y súbelo a la placa.
-
 <p align="center">
    <img src="media/carpetas.png" width="650">
    <br>
    <em>Figura: Carpeta data en el mismo directorio que el archivo .ino</em>
 </p>
-
+5. Sube los archivos a SPIFFS:
+   - Conecta tu ESP32.
+   - En el menú "Herramientas", selecciona el puerto correcto.
+   - Haz clic en **Herramientas > ESP32 Sketch Data Upload**. Esto subirá los archivos a la memoria flash del ESP32.
 <p align="center">
    <img src="media/sketch_data.png" width="650">
    <br>
    <em>Figura: Subir archivos</em>
 </p>
+6. Abre el código principal (el archivo `.ino`), ajusta las credenciales WiFi y súbelo a la placa.
+
 
 ## Explicación del Código
 
