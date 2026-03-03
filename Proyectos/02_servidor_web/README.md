@@ -136,7 +136,7 @@ Ruta (método): Descripción
 
 ## Autor
 
-Nombre: Eduardo Pichardo
+Nombre: Pichardo Rico Cristian Eduardo
 
 ## Licencia
 
