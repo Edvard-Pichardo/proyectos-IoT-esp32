@@ -1,6 +1,6 @@
 # Proyectos IoT - ESP32
 
-![ESP32](https://img.shields.io/badge/ESP32-Desarrollo-blue) ![Bluetooth](https://img.shields.io/badge/Bluetooth-SPP-green) ![DHT11](https://img.shields.io/badge/Sensor-DHT11-orange)
+![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue) ![IoT](https://img.shields.io/badge/Tema-IoT-green) ![Arduino](https://img.shields.io/badge/IDE-Arduino-teal)
 
 ## Descripción
 
