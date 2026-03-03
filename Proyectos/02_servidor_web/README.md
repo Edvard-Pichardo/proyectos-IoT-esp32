@@ -48,6 +48,14 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 
 **Nota:** La fotoresistencia forma un divisor de tensión con la resistencia de 10kΩ. La tensión en el pin ADC varía con la luz incidente.
 
+<p align="center">
+   <img src="media/conexion_protoboard.jpeg" width="200">
+   <img src="media/conexion_placa_esp32.jpeg" width="200">
+   <br>
+   <em>Figura: Montaje físico del programa</em>
+</p>
+
+
 ## Configuración del Entorno
 
 ### Arduino IDE
