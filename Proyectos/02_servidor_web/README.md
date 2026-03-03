@@ -6,6 +6,12 @@
 
 Este es el segundo proyecto de una serie dedicada al Internet de las Cosas (IoT). En esta práctica se implementa un **servidor web local** en el ESP32 que permite a los usuarios interactuar con el hardware a través de una interfaz gráfica accesible desde cualquier navegador en la misma red WiFi.
 
+<p align="center">
+   <img src="media/Servidor_web_computadora" width="200">
+   <br>
+   <em>Figura: Servidor web local</em>
+</p>
+
 El sistema permite:
 
 - **Monitorear** en tiempo real los valores de un potenciómetro y una fotoresistencia (sensores analógicos) mediante actualizaciones automáticas cada segundo.
