@@ -90,7 +90,8 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 </p>
 
 6. Abre el código principal (el archivo `.ino`), ajusta las credenciales WiFi y súbelo a la placa.
-
+7. Espera a que la placa se conecte a la red WiFi.
+8. Una vez conectado, copia la dirección IP del monitor serie y pegala en el navegador. Debes estar conectado a la misma red para acceder. 
 
 ## Explicación del Código
 
