@@ -22,15 +22,15 @@ Este repositorio documenta el desarrollo de cinco sistemas IoT implementados con
 
 ### 1. Control por Bluetooth
 
-Comunicación directa entre dispositivo móvil y ESP32 para control de actuadores en tiempo real.
+**Comunicación inalámbrica para monitoreo y actuación remota.**
 
-Sistema IoT basado en comunicación Bluetooth clásica (SPP) entre un dispositivo móvil y una placa ESP32 DevKit V1. El sistema permite controlar actuadores digitales y consultar variables ambientales medidas por un sensor DHT11 mediante comandos remotos.
+Este proyecto implementa un sistema de control y monitoreo utilizando un ESP32 como servidor Bluetooth clásico (SPP). A través de una aplicación de terminal Bluetooth en un dispositivo móvil, el usuario puede enviar comandos numéricos para encender o apagar individualmente cinco LEDs, así como recibir lecturas de temperatura y humedad de un sensor DHT11 al presionar botones físicos conectados al ESP32. La comunicación es bidireccional y en tiempo real, demostrando los fundamentos de la interacción inalámbrica en sistemas embebidos.
 
-El ESP32 opera como servidor Bluetooth, recibe comandos ASCII y responde con datos de temperatura y humedad cuando se activan entradas físicas.
+### 2. Servidor Web Local
 
-### 2. Servidor Web Local (pendiente)
+**Interfaz gráfica desde el navegador para control y visualización.**
 
-Implementación de un servidor HTTP embebido para monitoreo y control desde navegador.
+En este proyecto, el ESP32 actúa como un servidor web asíncrono que aloja una página web interactiva. Los usuarios conectados a la misma red WiFi pueden acceder a la interfaz para monitorear en tiempo real los valores de un potenciómetro y una fotoresistencia, así como controlar cinco LEDs: tres de ellos mediante interruptores de encendido/apagado y dos con control de brillo por PWM a través de deslizadores. La página web, construida con HTML, CSS y JavaScript, se comunica con el servidor mediante peticiones AJAX para actualizar los datos sin recargar la página. Este proyecto sienta las bases para aplicaciones de domótica y monitoreo remoto.
 
 ### 3. Comunicación MQTT (pendiente)
 
