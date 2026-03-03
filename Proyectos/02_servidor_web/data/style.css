@@ -1,0 +1,187 @@
+/*
+  style.css - Estilos para la interfaz web del Proyecto IoT 2
+  Autor: Eduardo Pichardo
+  Fecha: [03/03/2026]
+
+  Descripción:
+  Este archivo define la apariencia visual de la página web del servidor ESP32.
+  Incluye estilos para:
+    - Estructura general (html, body)
+    - Encabezados (header, h2, p, h3)
+    - Secciones de sensores y control de LEDs
+    - Interruptores tipo switch (para LEDs 1-3)
+    - Deslizadores (sliders) para control PWM de LEDs 4 y 5
+    - Efectos hover y transiciones para mejorar la experiencia de usuario
+*/
+
+/* Estilos generales de la página */
+html {
+    font-family: 'Roboto', sans-serif;  /* Fuente principal */
+    display: inline-block;               /* Para centrar el contenido */
+    text-align: center;                  /* Texto centrado por defecto */
+}
+
+body {
+    max-width: 800px;                    /* Ancho máximo en pantallas grandes */
+    margin: 0 auto;                       /* Centrar horizontalmente */
+    padding: 20px;                        /* Espaciado interior */
+    background-color: #e8f0fe;            /* Fondo azul claro suave */
+    color: #333;                           /* Color de texto principal (gris oscuro) */
+}
+
+/* Estilos del encabezado */
+header h2 {
+    font-size: 2rem;                      /* Tamaño grande para el título */
+    color: #2c3e50;                        /* Azul oscuro */
+    margin-bottom: 5px;                    /* Espaciado inferior reducido */
+}
+
+header p {
+    font-size: 1rem;                       /* Tamaño normal para el autor */
+    color: #7f8c8d;                         /* Gris claro */
+    margin-bottom: 20px;                    /* Espaciado inferior */
+}
+
+/* Estilo para los títulos de sección */
+h3 {
+    color: #2c3e50;                         /* Azul oscuro */
+    margin-bottom: 15px;                     /* Espaciado inferior */
+}
+
+/* Secciones de sensores y LEDs: fondo blanco con sombra */
+.sensor-section, .led-section {
+    background-color: #ffffff;               /* Blanco */
+    padding: 15px;                            /* Espaciado interior */
+    border-radius: 10px;                      /* Bordes redondeados */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    margin-bottom: 20px;                       /* Separación entre secciones */
+}
+
+/* Cada fila de control (LED individual o slider) */
+.control {
+    display: flex;                             /* Diseño flexible */
+    justify-content: space-between;            /* Elementos separados a los extremos */
+    align-items: center;                       /* Centrado vertical */
+    padding: 10px;                              /* Espaciado interior */
+    background-color: #d0e1f9;                  /* Azul claro suave */
+    border-radius: 8px;                          /* Bordes redondeados */
+    margin: 10px 0;                               /* Margen vertical entre controles */
+    transition: background-color 0.3s ease;       /* Transición suave al hacer hover */
+}
+
+/* Efecto hover en las filas de control */
+.control:hover {
+    background-color: #b0c4de;                   /* Azul un poco más oscuro */
+}
+
+/* Estilo base para las etiquetas de texto */
+label {
+    font-size: 1.1rem;                            /* Tamaño ligeramente mayor */
+    color: #333;                                   /* Gris oscuro */
+}
+
+/* ----- Estilos para los interruptores tipo switch (LEDs 1-3) ----- */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;                                   /* Ancho del switch */
+    height: 34px;                                   /* Alto del switch */
+}
+
+.switch input {
+    display: none;                                  /* Ocultar el checkbox original */
+}
+
+/* Estilo común para ambos sliders (fondo del switch) */
+.slider1, .slider2 {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;                         /* Gris cuando está apagado */
+    transition: .4s;                                 /* Transición suave */
+    border-radius: 34px;                             /* Forma de píldora */
+}
+
+/* Círculo interior del switch */
+.slider1:before, .slider2:before {
+    position: absolute;
+    content: "";
+    height: 26px;                                    /* Alto del círculo */
+    width: 26px;                                      /* Ancho del círculo */
+    left: 4px;                                         /* Separación desde la izquierda */
+    bottom: 4px;                                       /* Separación desde abajo */
+    background-color: white;                           /* Color blanco */
+    transition: .4s;                                   /* Transición suave */
+    border-radius: 50%;                                 /* Forma circular */
+}
+
+/* Colores cuando el switch está activado (checked) */
+input:checked + .slider1 {
+    background-color: #23D4FF;                       /* Azul celeste para LED1 y LED3 */
+}
+
+input:checked + .slider2 {
+    background-color: #58FE7D;                       /* Verde para LED2 */
+}
+
+/* Movimiento del círculo al activar */
+input:checked + .slider1:before {
+    transform: translateX(26px);                      /* Desplazar a la derecha */
+}
+
+input:checked + .slider2:before {
+    transform: translateX(26px);
+}
+
+/* ----- Estilos para los deslizadores (sliders) de PWM (LEDs 4 y 5) ----- */
+input[type="range"] {
+    width: 100%;                                       /* Ocupa todo el ancho disponible */
+    -webkit-appearance: none;                          /* Eliminar estilo por defecto en WebKit */
+    appearance: none;
+    height: 10px;                                       /* Grosor de la barra */
+    background: rgba(200, 162, 255, 0.6);               /* Lavanda con 60% opacidad */
+    border-radius: 5px;                                  /* Bordes redondeados */
+    outline: none;                                       /* Sin borde al seleccionar */
+    transition: background 0.3s ease;                    /* Transición suave */
+}
+
+/* Estilo del "thumb" (la perilla del slider) para navegadores WebKit (Chrome, Safari) */
+input[type="range"]::-webkit-slider-thumb {
+    width: 24px;                                          /* Tamaño aumentado */
+    height: 24px;
+    background: rgba(75, 0, 130, 1);                       /* Morado oscuro */
+    cursor: pointer;
+    border-radius: 50%;                                    /* Circular */
+    border: 2px solid rgba(156, 39, 176, 0.8);             /* Borde delgado que combina */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);               /* Sombra suave */
+    transition: background 0.3s ease, transform 0.3s ease;  /* Transiciones para efectos */
+}
+
+/* Estilo del thumb para Firefox */
+input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: rgba(75, 0, 130, 1);
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid rgba(156, 39, 176, 0.8);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+/* Efecto hover en el thumb: aumenta ligeramente de tamaño */
+input[type="range"]:hover::-webkit-slider-thumb {
+    transform: scale(1.1);                                 /* Escala al 110% */
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+    transform: scale(1.1);
+}
+
+/* También para IE/Edge (opcional) */
+input[type="range"]:hover::-ms-thumb {
+    transform: scale(1.1);
+}
