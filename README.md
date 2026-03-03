@@ -1,10 +1,6 @@
 # Proyectos IoT - ESP32
 
-![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue) ![IoT](https://img.shields.io/badge/Tema-IoT-green) ![Arduino](https://img.shields.io/badge/IDE-Arduino-teal)
-
-![C++](https://img.shields.io/badge/Lenguaje-C%2B%2B-00599C)
-![PlataformaIO](https://img.shields.io/badge/PlatformIO-Compatible-blueviolet)
-![Open Source](https://img.shields.io/badge/Open%20Source-❤️-red)
+![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue) ![IoT](https://img.shields.io/badge/Tema-IoT-green) ![Arduino](https://img.shields.io/badge/IDE-Arduino-teal) ![C++](https://img.shields.io/badge/Lenguaje-C%2B%2B-00599C) ![Open Source](https://img.shields.io/badge/Open%20Source-❤️-red)
 
 ## Descripción
 
