@@ -84,7 +84,7 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 </p>
 
 <p align="center">
-   <img src="media/sketch_data.png" width="550">
+   <img src="media/sketch_data.png" width="650">
    <br>
    <em>Figura: Subir archivos</em>
 </p>
@@ -150,6 +150,12 @@ Ruta (método): Descripción
   - Mueve los deslizadores para ajustar el brillo de LED4 y LED5.
 
 9. Observa los mensajes de depuración en el monitor serie para verificar la recepción de comandos.
+
+<p align="center">
+   <img src="media/funcionamiento.jpeg" width="350">
+   <br>
+   <em>Figura: Funcionamiento</em>
+</p>
 
 ## Posibles Mejoras
 
