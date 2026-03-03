@@ -78,7 +78,7 @@ A continuación se describen las conexiones físicas entre los componentes y el 
 6. Abre el código principal (el archivo `.ino`), ajusta las credenciales WiFi y súbelo a la placa.
 
 <p align="center">
-   <img src="media/carpetas.png" width="550">
+   <img src="media/carpetas.png" width="650">
    <br>
    <em>Figura: Carpeta data en el mismo directorio que el archivo .ino</em>
 </p>
