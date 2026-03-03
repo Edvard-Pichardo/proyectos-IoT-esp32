@@ -8,9 +8,9 @@ Este es el segundo proyecto de una serie dedicada al Internet de las Cosas (IoT)
 
 El sistema permite:
 
-- **Monitorear en tiempo real** los valores de un potenciómetro y una fotoresistencia (sensores analógicos) mediante actualizaciones automáticas cada segundo.
-- **Controlar el encendido/apagado** de tres LEDs (LED1, LED2, LED3) mediante interruptores tipo switch en la interfaz web.
-- **Ajustar el brillo** de dos LEDs (LED4 y LED5) mediante controles deslizantes (PWM), con valores de 0 a 255.
+- **Monitorear** en tiempo real los valores de un potenciómetro y una fotoresistencia (sensores analógicos) mediante actualizaciones automáticas cada segundo.
+- **Controlar** el encendido/apagado de tres LEDs (LED1, LED2, LED3) mediante interruptores tipo switch en la interfaz web.
+- **Ajustar** el brillo de dos LEDs (LED4 y LED5) mediante controles deslizantes (PWM), con valores de 0 a 255.
 
 La comunicación entre el cliente (navegador) y el servidor (ESP32) se realiza mediante peticiones **AJAX**, lo que permite actualizar los datos y enviar comandos sin necesidad de recargar la página. Los archivos de la interfaz web (HTML, CSS, JavaScript) se almacenan en el sistema de archivos **SPIFFS** del ESP32, facilitando su organización y modificación.
 
@@ -87,13 +87,9 @@ Ruta (método): Descripción
 - `/slider` (GET): Recibe el valor (0-255) para el LED4 y ajusta el PWM.
 - `/slider2` (GET): Recibe el valor (0-255) para el LED5 y ajusta el PWM.
 
-`Función processor`:
+`Función processor`: Reemplaza los placeholders en el HTML (como %BUTTONPLACEHOLDER% y %SLIDERVALUE%) con el estado actual de los LEDs y el valor del slider. Esto permite que la página se cargue mostrando el estado correcto de los interruptores y el valor del slider.
 
-Reemplaza los placeholders en el HTML (como %BUTTONPLACEHOLDER% y %SLIDERVALUE%) con el estado actual de los LEDs y el valor del slider. Esto permite que la página se cargue mostrando el estado correcto de los interruptores y el valor del slider.
-
-`PWM`:
-
-Se utilizan dos canales PWM independientes: canal 0 para LED4 y canal 1 para LED5. Ambos configurados con frecuencia de 1 kHz y resolución de 8 bits, permitiendo valores de 0 a 255.
+`PWM`: Se utilizan dos canales PWM independientes: canal 0 para LED4 y canal 1 para LED5. Ambos configurados con frecuencia de 1 kHz y resolución de 8 bits, permitiendo valores de 0 a 255.
 
 ### Archivos Web
 
