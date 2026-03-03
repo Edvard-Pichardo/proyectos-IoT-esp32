@@ -59,3 +59,11 @@ Automatización IoT con servicios en la nube para control remoto de dispositivos
 - APIs de mensajería
 
 - Servicios cloud IoT
+
+## Autor
+
+Nombre: Pichardo Rico Cristian Eduardo
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT. Puedes ver el archivo LICENSE para más detalles.
