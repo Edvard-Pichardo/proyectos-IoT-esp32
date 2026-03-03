@@ -2,6 +2,10 @@
 
 ![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue) ![IoT](https://img.shields.io/badge/Tema-IoT-green) ![Arduino](https://img.shields.io/badge/IDE-Arduino-teal)
 
+![C++](https://img.shields.io/badge/Lenguaje-C%2B%2B-00599C)
+![PlataformaIO](https://img.shields.io/badge/PlatformIO-Compatible-blueviolet)
+![Open Source](https://img.shields.io/badge/Open%20Source-❤️-red)
+
 ## Descripción
 
 Este repositorio documenta el desarrollo de cinco sistemas IoT implementados con un microcontrolador ESP32 DevKit V1 como parte del curso Introducción al Internet de las Cosas. Cada proyecto explora un paradigma distinto de comunicación y control de dispositivos físicos.
