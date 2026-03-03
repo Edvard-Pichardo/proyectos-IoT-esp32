@@ -151,5 +151,5 @@ Verás las lecturas en la terminal Bluetooth.
 
 Nombre: Pichardo Rico Cristian Eduardo
 
-Licencia
+## Licencia
 Este proyecto está bajo la licencia MIT. Puedes ver el archivo LICENSE para más detalles.
