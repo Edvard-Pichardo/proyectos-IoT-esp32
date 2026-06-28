@@ -32,15 +32,17 @@ Este proyecto implementa un sistema de control y monitoreo utilizando un ESP32 c
 
 En este proyecto, el ESP32 actúa como un servidor web asíncrono que aloja una página web interactiva. Los usuarios conectados a la misma red WiFi pueden acceder a la interfaz para monitorear en tiempo real los valores de un potenciómetro y una fotoresistencia, así como controlar cinco LEDs: tres de ellos mediante interruptores de encendido/apagado y dos con control de brillo por PWM a través de deslizadores. La página web, construida con HTML, CSS y JavaScript, se comunica con el servidor mediante peticiones AJAX para actualizar los datos sin recargar la página. Este proyecto sienta las bases para aplicaciones de domótica y monitoreo remoto.
 
-### 3. Comunicación MQTT (pendiente)
+### 3. Comunicación MQTT
 
 **Publicación y suscripción de datos mediante protocolo MQTT.**
 
 Este proyecto implementa un cliente MQTT en el ESP32 que se conecta a un broker público (mosquitto) para publicar lecturas de sensores (fotoresistencia, potenciómetro y DHT11) y recibir comandos de control para cinco LEDs. Los botones físicos permiten publicar manualmente los valores de los sensores, mientras que el DHT11 envía automáticamente temperatura y humedad cada 5 segundos. El uso del protocolo MQTT, ligero y eficiente, sienta las bases para sistemas IoT escalables, integración con dashboards y plataformas de automatización.
 
-### 4. Control mediante Bot de Telegram (pendiente)
+### 4. Control mediante Bot de Telegram
 
-Interfaz remota segura para control y monitoreo del sistema mediante mensajería.
+**Gestión remota de dispositivos mediante mensajería instantánea.**
+
+Este proyecto convierte al ESP32 en un bot de Telegram que permite controlar y monitorear dispositivos desde cualquier lugar a través de mensajes de texto. El sistema incluye cinco comandos principales: encender/apagar LEDs individualmente (´/led [1-5] on/off´), leer el valor del potenciómetro (/pot), configurar el umbral de una alarma de luz (/rangoAlarma [0-4095]) y activar/desactivar el sistema de alarma (/alarma on/off). Cuando la alarma está activada, el bot envía una notificación automática si el nivel de luz (medido por una fotoresistencia) cae por debajo del umbral establecido. Este proyecto demuestra cómo integrar dispositivos IoT con servicios de mensajería populares para crear sistemas de monitoreo y control accesibles desde cualquier dispositivo con Telegram.
 
 ### 5. Integración con SinricPro (pendiente)
 
