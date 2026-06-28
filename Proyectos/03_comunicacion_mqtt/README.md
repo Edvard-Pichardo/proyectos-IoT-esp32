@@ -102,3 +102,41 @@ Recibe el payload (convertido a entero) y ejecuta las acciones correspondientes 
 | `ClaseIoT/Pichardo/Potenciometro`   | Publicación del potenciómetro       | 
 | `ClaseIoT/Pichardo/DHT/Humedad`         | Publicación de la humedad |
 | `ClaseIoT/Pichardo/DHT/Temperatura`  | Publicación de temperatura        | 
+
+## Instrucciones de Uso
+
+1. Arma el circuito según el diagrama de conexiones.
+
+2. Configura las credenciales WiFi en el código (ssid y password).
+
+3. Carga el programa al ESP32.
+
+4. Abre el monitor serie (115200 baudios) para ver mensajes de depuración.
+
+5. Verifica la conexión al broker – el monitor mostrará "Conectado con el broker!".
+
+6. Prueba los botones:
+   
+- Presiona el botón pull‑up (GPIO 4) para publicar el valor de la fotoresistencia.
+
+- Presiona el botón pull‑down (GPIO 15) para publicar el valor del potenciómetro.
+
+7. Publica mensajes desde otro cliente MQTT (por ejemplo, MQTT Explorer o un script en Python) en el tópico ClaseIoT/Pichardo/Led con los valores 0‑9 y observa cómo reaccionan los LEDs.
+
+8. Observa las lecturas automáticas del DHT11 cada 5 segundos en el monitor serie y en los tópicos correspondientes.
+
+## Posibles Mejoras
+
+- Cambiar el broker público por uno propio (local o en la nube) para mayor seguridad.
+
+- Agregar autenticación (usuario/contraseña) al broker.
+
+- Incluir un sistema de "gestión de estado" para recordar el último comando enviado.
+
+- Extender el control a más actuadores (relés, servos, etc.).
+
+- Visualizar los datos en un dashboard como Node-RED o Home Assistant.
+
+## Autor
+Pichardo Rico Cristian Eduardo
+Implementar la funcionalidad de "will" (última voluntad) para notificar desconexiones.
