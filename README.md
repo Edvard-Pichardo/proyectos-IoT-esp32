@@ -34,7 +34,9 @@ En este proyecto, el ESP32 actúa como un servidor web asíncrono que aloja una 
 
 ### 3. Comunicación MQTT (pendiente)
 
-Sistema de publicación/suscripción usando broker Mosquitto para intercambio de datos IoT.
+**Publicación y suscripción de datos mediante protocolo MQTT.**
+
+Este proyecto implementa un cliente MQTT en el ESP32 que se conecta a un broker público (mosquitto) para publicar lecturas de sensores (fotoresistencia, potenciómetro y DHT11) y recibir comandos de control para cinco LEDs. Los botones físicos permiten publicar manualmente los valores de los sensores, mientras que el DHT11 envía automáticamente temperatura y humedad cada 5 segundos. El uso del protocolo MQTT, ligero y eficiente, sienta las bases para sistemas IoT escalables, integración con dashboards y plataformas de automatización.
 
 ### 4. Control mediante Bot de Telegram (pendiente)
 
