@@ -42,7 +42,7 @@ Este proyecto implementa un cliente MQTT en el ESP32 que se conecta a un broker 
 
 **Gestión remota de dispositivos mediante mensajería instantánea.**
 
-Este proyecto convierte al ESP32 en un bot de Telegram que permite controlar y monitorear dispositivos desde cualquier lugar a través de mensajes de texto. El sistema incluye cinco comandos principales: encender/apagar LEDs individualmente (´/led [1-5] on/off´), leer el valor del potenciómetro (/pot), configurar el umbral de una alarma de luz (/rangoAlarma [0-4095]) y activar/desactivar el sistema de alarma (/alarma on/off). Cuando la alarma está activada, el bot envía una notificación automática si el nivel de luz (medido por una fotoresistencia) cae por debajo del umbral establecido. Este proyecto demuestra cómo integrar dispositivos IoT con servicios de mensajería populares para crear sistemas de monitoreo y control accesibles desde cualquier dispositivo con Telegram.
+Este proyecto convierte al ESP32 en un bot de Telegram que permite controlar y monitorear dispositivos desde cualquier lugar a través de mensajes de texto. El sistema incluye cinco comandos principales: encender/apagar LEDs individualmente (`/led [1-5] on/off`), leer el valor del potenciómetro (`/pot`), configurar el umbral de una alarma de luz (`/rangoAlarma` [0-4095]) y activar/desactivar el sistema de alarma (`/alarma on/off`). Cuando la alarma está activada, el bot envía una notificación automática si el nivel de luz (medido por una fotoresistencia) cae por debajo del umbral establecido. Este proyecto demuestra cómo integrar dispositivos IoT con servicios de mensajería populares para crear sistemas de monitoreo y control accesibles desde cualquier dispositivo con Telegram.
 
 ### 5. Integración con SinricPro (pendiente)
 
