@@ -77,18 +77,28 @@ Este proyecto muestra el uso del protocolo **MQTT**, ligero y eficiente, ideal p
 
 - Se crea el objeto EspMQTTClient con los parámetros WiFi y broker.
 
-Función onConnectionEstablished():
+**Función** `onConnectionEstablished()`:
 Se ejecuta automáticamente cuando el cliente se conecta al broker. Aquí se suscribe al tópico de control de LEDs y se asocia un callback (handleLedControl) para procesar los mensajes entrantes.
 
-- Función `handleLedControl(payload)`:
+**Función** `handleLedControl(payload)`:
 Recibe el payload (convertido a entero) y ejecuta las acciones correspondientes según el valor (0‑9). Incluye efectos de iluminación como encender pares/impares y secuencias tipo "tren".
 
-- Bucle `loop()`:
+**Bucle** `loop()`:
 
-`client.loop()`: Mantiene la conexión MQTT activa y procesa mensajes entrantes.
+- `client.loop()`: Mantiene la conexión MQTT activa y procesa mensajes entrantes.
 
-`Botón pull‑up` (activo bajo): Publica el valor de la fotoresistencia cuando se presiona (con antirrebote).
+- `Botón pull‑up` (activo bajo): Publica el valor de la fotoresistencia cuando se presiona (con antirrebote).
 
-`Botón pull‑down` (activo alto): Publica el valor del potenciómetro.
+- `Botón pull‑down` (activo alto): Publica el valor del potenciómetro.
 
-`Temporizador DHT`: Cada 5 segundos, lee el sensor y publica temperatura y humedad en sus tópicos.
+- `Temporizador DHT`: Cada 5 segundos, lee el sensor y publica temperatura y humedad en sus tópicos.
+
+## Tópicos utilizados:
+
+| Topico                   | Uso      | 
+|--------------------------|----------|
+| `ClaseIoT/Pichardo/Led` | Suscripción para recibir comandos (0‑9)        | 
+| `ClaseIoT/Pichardo/Fotoresistencia`         | Publicación del LDR        | 
+| `ClaseIoT/Pichardo/Potenciometro`   | Publicación del potenciómetro       | 
+| `ClaseIoT/Pichardo/DHT/Humedad`         | Publicación de la humedad |
+| `ClaseIoT/Pichardo/DHT/Temperatura`  | Publicación de temperatura        | 
