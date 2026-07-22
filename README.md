@@ -66,10 +66,14 @@ Este proyecto utiliza la plataforma SinricPro para conectar el ESP32 con Alexa o
 
 - Servicios cloud IoT
 
-## Autor
-
-Nombre: Pichardo Rico Cristian Eduardo
-
 ## Licencia
 
 Este proyecto está bajo la licencia MIT. Puedes ver el archivo LICENSE para más detalles.
+
+# Autor
+
+## Edvard Pichardo
+
+**Licenciado en Física**  
+Universidad Nacional Autónoma de México (UNAM)
+
