@@ -1,79 +1,118 @@
-# Proyectos IoT - ESP32
+<div align="center">
+  
+# Proyectos IoT con ESP32
 
-![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue) ![IoT](https://img.shields.io/badge/Tema-IoT-green) ![Arduino](https://img.shields.io/badge/IDE-Arduino-teal) ![C++](https://img.shields.io/badge/Lenguaje-C%2B%2B-00599C) ![Open Source](https://img.shields.io/badge/Open%20Source-❤️-red)
+![ESP32](https://img.shields.io/badge/Plataforma-ESP32%20DevKit%20V1-blue)
+![Arduino](https://img.shields.io/badge/IDE-Arduino-00979D?logo=arduino&logoColor=white)
+![C++](https://img.shields.io/badge/Lenguaje-C%2B%2B-00599C)
+![Licencia](https://img.shields.io/badge/Licencia-MIT-green)
 
-## Descripción
+Colección de **cinco sistemas IoT** construidos con un ESP32 DevKit V1. Cada proyecto controla y monitorea el mismo circuito físico, pero con un **paradigma de comunicación distinto**: Bluetooth, servidor web, MQTT, mensajería con bot y asistentes de voz en la nube.
 
-Este repositorio documenta el desarrollo de cinco sistemas IoT implementados con un microcontrolador ESP32 DevKit V1 como parte del curso Introducción al Internet de las Cosas. Cada proyecto explora un paradigma distinto de comunicación y control de dispositivos físicos.
+</div>
 
-## Hardware utilizado
+> Desarrollados en el curso *Introducción al Internet de las Cosas* (Seminario de Ciencias de la Computación A), Facultad de Ciencias, UNAM.
 
-- ESP32 DevKit V1
+---
 
-- Sensores digitales y analógicos
+## Contenido
 
-- Actuadores (LEDs, relés, buzzer)
+- [Proyectos incluidos](#-proyectos-incluidos)
+- [Arquitectura general](#-arquitectura-general)
+- [Hardware](#-hardware)
+- [Cómo empezar](#-cómo-empezar)
+- [Estructura del repositorio](#-estructura-del-repositorio)
+- [Ideas futuras](#-ideas-futuras)
+- [Autor y licencia](#-autor-y-licencia)
 
-<p align="center">
-<img src="media/PinMapEsp32IoT.jpg" width="600">
-</p>
+---
 
 ## Proyectos incluidos
 
-### 1. Control por Bluetooth
+| # | Proyecto | Comunicación | Qué hace |
+|:-:|---|---|---|
+| 1 | [Control por Bluetooth](Proyectos/01_bluetooth_control/) | Bluetooth clásico (SPP) | Enciende y apaga 5 LEDs con comandos desde una app de terminal y devuelve temperatura y humedad (DHT11) al presionar botones físicos |
+| 2 | [Servidor Web Local](Proyectos/02_servidor_web/) | HTTP + AJAX (servidor asíncrono) | Página web con lecturas en vivo de un potenciómetro y una fotoresistencia, 3 LEDs con interruptor y 2 con control de brillo por PWM |
+| 3 | [Comunicación MQTT](Proyectos/03_comunicacion_mqtt/) | MQTT (publicación/suscripción) | Publica datos de sensores en un broker y recibe comandos para controlar 5 LEDs, incluidos efectos de secuencia |
+| 4 | [Bot de Telegram](Proyectos/04_Bot_telegram/) | HTTPS (API de Telegram) | Controla LEDs, lee el potenciómetro y envía una alarma cuando la luz cae por debajo de un umbral configurable |
+| 5 | [Integración con SinricPro](Proyectos/05_Integracion_sinricpro/) | WebSockets (nube SinricPro) | Controla 3 LEDs por comandos de voz con Alexa o Google Home |
 
-**Comunicación inalámbrica para monitoreo y actuación remota.**
+## Arquitectura general
 
-Este proyecto implementa un sistema de control y monitoreo utilizando un ESP32 como servidor Bluetooth clásico (SPP). A través de una aplicación de terminal Bluetooth en un dispositivo móvil, el usuario puede enviar comandos numéricos para encender o apagar individualmente cinco LEDs, así como recibir lecturas de temperatura y humedad de un sensor DHT11 al presionar botones físicos conectados al ESP32. La comunicación es bidireccional y en tiempo real, demostrando los fundamentos de la interacción inalámbrica en sistemas embebidos.
+```mermaid
+flowchart LR
+    ESP["ESP32<br/>DevKit V1"]
 
-### 2. Servidor Web Local
+    ESP <-- "Bluetooth SPP" --> BT["Celular<br/>(app de terminal)"]
+    ESP <-- "HTTP / AJAX" --> WEB["Navegador web<br/>(misma red WiFi)"]
+    ESP <-- "MQTT" --> MQ["Broker MQTT"]
+    ESP <-- "HTTPS" --> TG["API de Telegram"]
+    ESP <-- "WebSocket" --> SI["Nube SinricPro"]
+    SI <--> VOZ["Alexa / Google Home"]
+```
 
-**Interfaz gráfica desde el navegador para control y visualización.**
+## Hardware
 
-En este proyecto, el ESP32 actúa como un servidor web asíncrono que aloja una página web interactiva. Los usuarios conectados a la misma red WiFi pueden acceder a la interfaz para monitorear en tiempo real los valores de un potenciómetro y una fotoresistencia, así como controlar cinco LEDs: tres de ellos mediante interruptores de encendido/apagado y dos con control de brillo por PWM a través de deslizadores. La página web, construida con HTML, CSS y JavaScript, se comunica con el servidor mediante peticiones AJAX para actualizar los datos sin recargar la página. Este proyecto sienta las bases para aplicaciones de domótica y monitoreo remoto.
+<p align="center">
+  <img src="media/PinMapEsp32IoT.jpg" alt="Mapa de pines del ESP32" width="80%">
+</p>
 
-### 3. Comunicación MQTT
+Los cinco proyectos comparten el **mismo circuito**: cada uno usa un subconjunto de los componentes con la misma asignación de pines. Así, un solo montaje sirve para probar todos.
 
-**Publicación y suscripción de datos mediante protocolo MQTT.**
 
-Este proyecto implementa un cliente MQTT en el ESP32 que se conecta a un broker público (mosquitto) para publicar lecturas de sensores (fotoresistencia, potenciómetro y DHT11) y recibir comandos de control para cinco LEDs. Los botones físicos permiten publicar manualmente los valores de los sensores, mientras que el DHT11 envía automáticamente temperatura y humedad cada 5 segundos. El uso del protocolo MQTT, ligero y eficiente, sienta las bases para sistemas IoT escalables, integración con dashboards y plataformas de automatización.
+| Componente | Pin | 1 | 2 | 3 | 4 | 5 |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| LED 1 | GPIO 14 | ✅ | ✅ | ✅ | ✅ | ✅ |
+| LED 2 | GPIO 27 | ✅ | ✅ | ✅ | ✅ | ✅ |
+| LED 3 | GPIO 26 | ✅ | ✅ | ✅ | ✅ | ✅ |
+| LED 4 | GPIO 25 | ✅ | ✅ (PWM) | ✅ | ✅ | — |
+| LED 5 | GPIO 33 | ✅ | ✅ (PWM) | ✅ | ✅ | — |
+| Pulsador SW1 (pull-down externo) | GPIO 15 | ✅ | — | ✅ | — | — |
+| Pulsador SW2 (pull-up) | GPIO 4 | ✅ | — | ✅ | — | — |
+| Sensor DHT11 | GPIO 32 | ✅ | — | ✅ | — | — |
+| Fotoresistencia (LDR) | GPIO 34 | — | ✅ | ✅ | ✅ | — |
+| Potenciómetro | GPIO 35 | — | ✅ | ✅ | ✅ | — |
 
-### 4. Control mediante Bot de Telegram
+- Los LEDs llevan resistencias de 220 Ω a GND.
+- En el proyecto 5 los tres LEDs pueden sustituirse por relés.
 
-**Gestión remota de dispositivos mediante mensajería instantánea.**
+## Cómo empezar
 
-Este proyecto convierte al ESP32 en un bot de Telegram que permite controlar y monitorear dispositivos desde cualquier lugar a través de mensajes de texto. El sistema incluye cinco comandos principales: encender/apagar LEDs individualmente (`/led [1-5] on/off`), leer el valor del potenciómetro (`/pot`), configurar el umbral de una alarma de luz (`/rangoAlarma` [0-4095]) y activar/desactivar el sistema de alarma (`/alarma on/off`). Cuando la alarma está activada, el bot envía una notificación automática si el nivel de luz (medido por una fotoresistencia) cae por debajo del umbral establecido. 
+1. Instala el [Arduino IDE](https://www.arduino.cc/en/software) y agrega el soporte para placas ESP32 (paquete **esp32** de Espressif, versión 3.x: el proyecto 2 usa `ledcAttachChannel`).
+2. Arma el circuito con el mapa de pines de arriba.
+3. Abre la carpeta del proyecto que quieras probar y consulta su README para ver las librerías y la configuración necesarias.
+4. Edita las credenciales del sketch (WiFi, token, claves) y carga el programa a la placa ("ESP32 Dev Module").
+5. Abre el Monitor Serie a **115200 baudios** para seguir los mensajes de depuración.
 
-### 5. Integración con SinricPro
+> Por seguridad, los sketches incluyen solo **valores de ejemplo** en lugar de credenciales.
 
-**Integración con asistentes de voz para control de dispositivos.**
+```text
+.
+├── Proyectos/
+│   ├── 01_bluetooth_control/
+│   ├── 02_servidor_web/
+│   ├── 03_comunicacion_mqtt/
+│   ├── 04_Bot_telegram/
+│   └── 05_Integracion_sinricpro/
+├── media/                # Imágenes y mapa de pines
+├── LICENSE
+└── README.md
+```
 
-Este proyecto utiliza la plataforma SinricPro para conectar el ESP32 con Alexa o Google Home, permitiendo controlar tres LEDs (o relés) mediante comandos de voz. Cada dispositivo se registra en la nube de SinricPro con un ID único y se asocia a funciones callback que cambian el estado de los LEDs al recibir órdenes de encendido/apagado. La comunicación se realiza a través de WebSockets, garantizando una respuesta rápida y confiable. 
+## Ideas futuras
 
-## Tecnologías usadas 
+- Unificar los cinco modos de control en un solo firmware.
+- Guardar las lecturas publicadas por MQTT en una base de datos o un archivo CSV para analizarlas después (por ejemplo, con Python) y graficar su evolución.
+- Un panel de visualización en tiempo real sobre el broker MQTT.
+- Autenticación y cifrado en las comunicaciones (broker propio con usuario y TLS, validación del usuario en el bot).
 
-- Arduino IDE
+## Autor y licencia
 
-- ESP32
+**Cristian Eduardo Pichardo Rico**
 
-- WiFi
+Egresado de la Licenciatura en Física, Facultad de Ciencias, UNAM
+GitHub: [@Edvard-Pichardo](https://github.com/Edvard-Pichardo)
 
-- MQTT
+Distribuido bajo la licencia **MIT**. Consulta el archivo [LICENSE](LICENSE) para más información.
 
-- HTTP
-
-- APIs de mensajería
-
-- Servicios cloud IoT
-
-## Licencia
-
-Este proyecto está bajo la licencia MIT. Puedes ver el archivo LICENSE para más detalles.
-
-# Autor
-
-## Edvard Pichardo
-
-**Licenciado en Física**  
-Universidad Nacional Autónoma de México (UNAM)
 
