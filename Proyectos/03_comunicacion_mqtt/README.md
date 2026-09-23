@@ -1,142 +1,127 @@
-# Proyecto IoT 3: Comunicación MQTT con ESP32 – Publicación y Suscripción de Datos
+<div align="center">
 
-![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue) ![MQTT](https://img.shields.io/badge/Protocolo-MQTT-brightgreen) ![DHT11](https://img.shields.io/badge/Sensor-DHT11-orange) ![Broker](https://img.shields.io/badge/Broker-mosquitto-lightgrey)
+# Proyecto 3: Comunicación MQTT con ESP32
 
-## Descripción General
+![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue)
+![MQTT](https://img.shields.io/badge/Protocolo-MQTT-660066?logo=mqtt&logoColor=white)
+![Arduino](https://img.shields.io/badge/IDE-Arduino-00979D?logo=arduino&logoColor=white)
 
-Este es el tercer proyecto de la serie IoT, en el cual se implementa un **cliente MQTT** en el ESP32 para comunicarse con un broker (en este caso, `test.mosquitto.org`). El sistema publica lecturas de sensores (fotoresistencia, potenciómetro y DHT11) y se suscribe a un tópico para recibir comandos que controlan cinco LEDs.
+El ESP32 actúa como **cliente MQTT**: publica lecturas de sensores en un broker y se suscribe a un tópico para recibir comandos que controlan cinco LEDs. MQTT es un protocolo ligero de publicación/suscripción, base de muchos sistemas IoT escalables y de la integración con dashboards y plataformas de automatización.
 
-**Funcionalidades principales:**
+</div>
 
-- **Publicación manual:** Al presionar dos botones físicos (pull‑up y pull‑down), se publican los valores de la fotoresistencia y el potenciómetro en tópicos específicos.
-- **Publicación automática:** Cada 5 segundos, el sensor DHT11 envía la temperatura y humedad a sus respectivos tópicos.
-- **Suscripción y control:** El ESP32 está suscrito al tópico `ClaseIoT/Pichardo/Led`; al recibir un número (0‑9), ejecuta acciones sobre los LEDs:
-  - `0` → apaga todos.
-  - `1` a `5` → enciende el LED correspondiente.
-  - `6` → enciende LEDs impares (1, 3, 5).
-  - `7` → enciende LEDs pares (2, 4).
-  - `8` → efecto "tren" ascendente.
-  - `9` → efecto "tren" descendente.
+[← Volver al índice de proyectos](../../README.md)
 
-Este proyecto muestra el uso del protocolo **MQTT**, ligero y eficiente, ideal para entornos IoT donde se requiere comunicación entre múltiples dispositivos y aplicaciones (dashboards, bases de datos, etc.).
+---
 
-## Componentes Necesarios
+## Qué hace
 
-| Componente               | Cantidad | Notas                                           |
-|--------------------------|----------|-------------------------------------------------|
-| ESP32 (cualquier modelo) | 1        | Cliente MQTT                                    |
-| Sensor DHT11             | 1        | Temperatura y humedad                           |
-| Fotoresistencia (LDR)    | 1        | Por ejemplo, GL5528                             |
-| Potenciómetro            | 1        | 10kΩ                                            |
-| LEDs (colores variados)  | 5        | Con resistencias de 220Ω                       |
-| Resistencias de 220Ω     | 5        | Para los LEDs                                   |
-| Resistor de 10kΩ         | 1        | Para la fotoresistencia (divisor de tensión)    |
-| Botones (pulsadores)     | 2        | Uno con pull‑up interno y otro con pull‑down externo |
-| Protoboard y cables      | -        | Para las conexiones                             |
+- **Publica el DHT11** (temperatura y humedad) automáticamente cada 5 segundos.
+- **Publica la fotoresistencia o el potenciómetro** de forma manual, al presionar el botón correspondiente.
+- **Recibe comandos** por MQTT para encender LEDs individuales, apagarlos todos o lanzar efectos de secuencia.
+- Se reconecta automáticamente al WiFi y al broker gracias a la librería `EspMQTTClient`.
 
-## Diagrama de Conexiones
+## Flujo de datos
 
-| Componente          | Pin del ESP32 | Notas                                                          |
-|---------------------|---------------|----------------------------------------------------------------|
-| LED1                | GPIO 14       | Ánodo al pin, cátodo a GND (con resistencia de 220Ω)          |
-| LED2                | GPIO 27       | Igual que LED1                                                 |
-| LED3                | GPIO 26       | Igual que LED1                                                 |
-| LED4                | GPIO 25       | Igual que LED1                                                 |
-| LED5                | GPIO 33       | Igual que LED1                                                 |
-| Botón Pull‑up       | GPIO 4        | Conectar entre el pin y GND (activo bajo)                      |
-| Botón Pull‑down     | GPIO 15       | Conectar entre el pin y VCC (3.3V) con resistencia pull‑down de 10kΩ a GND (activo alto) |
-| Fotoresistencia (LDR)| GPIO 34       | En serie con una resistencia de 10kΩ a GND; punto medio al pin; otro extremo a 3.3V |
-| Potenciómetro       | GPIO 35       | Pin central al ADC, extremos a 3.3V y GND                      |
-| DHT11               | GPIO 32       | VCC a 3.3V, GND a GND, Data al pin 32                          |
+```mermaid
+flowchart LR
+    subgraph ESP32
+        DHT["DHT11"]
+        LDR["Fotoresistencia"]
+        POT["Potenciómetro"]
+        LEDS["5 LEDs"]
+    end
 
-**Nota:** El botón pull‑up utiliza la resistencia interna del ESP32 (configurada con `INPUT_PULLUP`), por lo que no requiere componentes externos.
+    BROKER[("Broker MQTT<br/>test.mosquitto.org:1883")]
+    CLI["Cliente MQTT<br/>(MQTTX, MQTT Explorer,<br/>mosquitto_pub / sub)"]
 
-## Configuración del Entorno
+    DHT -- "cada 5 s" --> BROKER
+    LDR -- "botón GPIO 4" --> BROKER
+    POT -- "botón GPIO 15" --> BROKER
+    BROKER -- "ClaseIoT/Pichardo/Led" --> LEDS
+    CLI <--> BROKER
+```
 
-### Arduino IDE
+## Tópicos MQTT
 
-1. Instala el soporte para ESP32 en el Arduino IDE (guía oficial).
-2. Instala las siguientes librerías desde el Gestor de Librerías:
-   - **EspMQTTClient** (de Patrick Lapointe) – cliente MQTT fácil de usar.
-   - **DHT sensor library** de Adafruit.
-3. Selecciona la placa **ESP32 Dev Module** y el puerto COM correspondiente.
-4. Ajusta las credenciales WiFi y el broker MQTT (si deseas otro broker) en las líneas correspondientes del código.
-5. Carga el programa al ESP32.
+| Tópico | Sentido | Contenido |
+|---|:-:|---|
+| `ClaseIoT/Pichardo/Led` | ESP32 ← broker | Comando de control de LEDs (0 a 9) |
+| `ClaseIoT/Pichardo/Fotoresistencia` | ESP32 → broker | Lectura del LDR (0–4095) al presionar el botón de GPIO 4 |
+| `ClaseIoT/Pichardo/Potenciometro` | ESP32 → broker | Lectura del potenciómetro (0–4095) al presionar el botón de GPIO 15 |
+| `ClaseIoT/Pichardo/DHT/Temperatura` | ESP32 → broker | Temperatura en °C, cada 5 s |
+| `ClaseIoT/Pichardo/DHT/Humedad` | ESP32 → broker | Humedad relativa en %, cada 5 s |
 
-## Explicación del Código
+### Comandos para los LEDs
 
-### Bibliotecas utilizadas:
+| Mensaje | Efecto |
+|:-:|---|
+| `1` – `5` | Enciende el LED correspondiente |
+| `0` | Apaga todos los LEDs |
+| `6` | Enciende los LEDs impares (1, 3 y 5) |
+| `7` | Enciende los LEDs pares (2 y 4) |
+| `8` | Efecto "tren" ascendente: los LEDs se encienden en secuencia (800 ms entre cada uno) |
+| `9` | Efecto "tren" descendente: los LEDs se apagan en secuencia del 5 al 1 |
 
-- EspMQTTClient: Simplifica la conexión WiFi y MQTT, gestionando reconexiones automáticas.
+## Componentes y conexiones
 
-- DHT: Lectura del sensor DHT11.
+Usa el [mapa de pines compartido](../../media/PinMapEsp32IoT.jpg) del repositorio.
 
-### Configuración inicial:
+| Componente | Pin |
+|---|:-:|
+| LED 1 – 5 | GPIO 14, 27, 26, 25, 33 |
+| Botón con pull-up interno (publica el LDR) | GPIO 4 |
+| Botón con pull-down externo (publica el potenciómetro) | GPIO 15 |
+| Fotoresistencia (LDR) | GPIO 34 |
+| Potenciómetro | GPIO 35 |
+| DHT11 | GPIO 32 |
 
-- Se definen pines, tópicos y credenciales de red.
+## Cómo probarlo
 
-- Se crea el objeto EspMQTTClient con los parámetros WiFi y broker.
+**1. Librerías** (Gestor de bibliotecas del Arduino IDE):
 
-**Función** `onConnectionEstablished()`:
-Se ejecuta automáticamente cuando el cliente se conecta al broker. Aquí se suscribe al tópico de control de LEDs y se asocia un callback (handleLedControl) para procesar los mensajes entrantes.
+- `EspMQTTClient` (instala también `PubSubClient`)
+- `DHT sensor library` y `Adafruit Unified Sensor`
 
-**Función** `handleLedControl(payload)`:
-Recibe el payload (convertido a entero) y ejecuta las acciones correspondientes según el valor (0‑9). Incluye efectos de iluminación como encender pares/impares y secuencias tipo "tren".
+**2. Configuración.** En el sketch, ajusta los datos de tu red y del broker:
 
-**Bucle** `loop()`:
+```cpp
+const char* ssid       = "Nombre_red";
+const char* password   = "Contraseña_red";
+const char* broker     = "test.mosquitto.org";  // Broker público de prueba
+const char* nameClient = "ESP32_name";          // Identificador único del cliente
+```
 
-- `client.loop()`: Mantiene la conexión MQTT activa y procesa mensajes entrantes.
+**3. Carga el sketch**, abre el Monitor Serie a 115200 baudios y espera a que se conecte.
 
-- `Botón pull‑up` (activo bajo): Publica el valor de la fotoresistencia cuando se presiona (con antirrebote).
+**4. Interactúa con el sistema** desde cualquier cliente MQTT. Por ejemplo, con las herramientas de línea de comandos de Mosquitto:
 
-- `Botón pull‑down` (activo alto): Publica el valor del potenciómetro.
+```bash
+# Escuchar todo lo que publica el ESP32
+mosquitto_sub -h test.mosquitto.org -t "ClaseIoT/Pichardo/#" -v
 
-- `Temporizador DHT`: Cada 5 segundos, lee el sensor y publica temperatura y humedad en sus tópicos.
+# Encender los LEDs impares
+mosquitto_pub -h test.mosquitto.org -t "ClaseIoT/Pichardo/Led" -m "6"
 
-## Tópicos utilizados:
+# Lanzar el efecto tren ascendente
+mosquitto_pub -h test.mosquitto.org -t "ClaseIoT/Pichardo/Led" -m "8"
+```
 
-| Topico                   | Uso      | 
-|--------------------------|----------|
-| `ClaseIoT/Pichardo/Led` | Suscripción para recibir comandos (0‑9)        | 
-| `ClaseIoT/Pichardo/Fotoresistencia`         | Publicación del LDR        | 
-| `ClaseIoT/Pichardo/Potenciometro`   | Publicación del potenciómetro       | 
-| `ClaseIoT/Pichardo/DHT/Humedad`         | Publicación de la humedad |
-| `ClaseIoT/Pichardo/DHT/Temperatura`  | Publicación de temperatura        | 
+<!-- Opcional: agregar aquí una captura del cliente MQTT (MQTTX / MQTT Explorer) mostrando los tópicos -->
 
-## Instrucciones de Uso
+## Limitaciones y mejoras posibles
 
-1. Arma el circuito según el diagrama de conexiones.
-
-2. Configura las credenciales WiFi en el código (ssid y password).
-
-3. Carga el programa al ESP32.
-
-4. Abre el monitor serie (115200 baudios) para ver mensajes de depuración.
-
-5. Verifica la conexión al broker – el monitor mostrará "Conectado con el broker!".
-
-6. Prueba los botones:
-   
-- Presiona el botón pull‑up (GPIO 4) para publicar el valor de la fotoresistencia.
-
-- Presiona el botón pull‑down (GPIO 15) para publicar el valor del potenciómetro.
-
-7. Publica mensajes desde otro cliente MQTT (por ejemplo, MQTT Explorer o un script en Python) en el tópico ClaseIoT/Pichardo/Led con los valores 0‑9 y observa cómo reaccionan los LEDs.
-
-8. Observa las lecturas automáticas del DHT11 cada 5 segundos en el monitor serie y en los tópicos correspondientes.
-
-## Posibles Mejoras
-
-- Cambiar el broker público por uno propio (local o en la nube) para mayor seguridad.
-
-- Agregar autenticación (usuario/contraseña) al broker.
-
-- Incluir un sistema de "gestión de estado" para recordar el último comando enviado.
-
-- Extender el control a más actuadores (relés, servos, etc.).
-
-- Visualizar los datos en un dashboard como Node-RED o Home Assistant.
+- **Broker público sin autenticación:** `test.mosquitto.org` es ideal para pruebas, pero cualquiera que conozca los tópicos puede leer los datos o mandar comandos. Para un uso real conviene un broker propio con usuario, contraseña y TLS, y tópicos únicos.
+- **Efectos bloqueantes:** los comandos `8` y `9` usan `delay()` dentro del callback, así que durante la secuencia el ESP32 no procesa otros eventos. Se podría reescribir con `millis()`.
+- **Antirrebote compartido:** ambos botones usan el mismo temporizador; separarlos evitaría que uno bloquee al otro.
+- **Datos sin persistencia:** las lecturas solo se publican; guardarlas en una base de datos permitiría analizar su historial.
 
 ## Autor
-Pichardo Rico Cristian Eduardo
-Implementar la funcionalidad de "will" (última voluntad) para notificar desconexiones.
+
+**Cristian Eduardo Pichardo Rico**
+
+Egresado de la Licenciatura en Física, Facultad de Ciencias, UNAM
+GitHub: [@Edvard-Pichardo](https://github.com/Edvard-Pichardo)
+
+Distribuido bajo la licencia **MIT**. Consulta el archivo [LICENSE](../../LICENSE).
+
