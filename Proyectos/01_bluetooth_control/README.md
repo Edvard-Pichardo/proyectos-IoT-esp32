@@ -68,13 +68,6 @@ flowchart LR
 | Resistor de 10 kΩ | 1 | Solo para el pull-down externo de SW1 |
 | Protoboard y cables | — | Para las conexiones |
 
-<p align="center">
-   <img src="media/Conexion_bluetooth.jpeg" width="200" alt="Conexiones en la protoboard">
-   <img src="media/ESP32_utilizado.jpeg" width="200" alt="ESP32 utilizado">
-   <br>
-   <em>Figura: Montaje físico del proyecto</em>
-</p>
-
 ## Diagrama de conexiones
 
 Usa también el [mapa de pines compartido](../../media/PinMapEsp32IoT.jpg) del repositorio.
