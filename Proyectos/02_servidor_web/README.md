@@ -1,179 +1,188 @@
-# Proyecto IoT 2: Servidor Web con ESP32 – Control y Monitoreo en Tiempo Real
+<div align="center">
+   
+# Proyecto 2: Servidor Web con ESP32, Control y Monitoreo en Tiempo Real
 
-![ESP32](https://img.shields.io/badge/ESP32-Desarrollo-blue) ![Servidor Web](https://img.shields.io/badge/Servidor-Web-green) ![PWM](https://img.shields.io/badge/PWM-Control%20de%20brillo-orange) ![SPIFFS](https://img.shields.io/badge/SPIFFS-Sistema%20de%20archivos-yellow)
+![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue)
+![Servidor Web](https://img.shields.io/badge/Servidor-Web%20as%C3%ADncrono-green)
+![PWM](https://img.shields.io/badge/PWM-Control%20de%20brillo-orange)
+![SPIFFS](https://img.shields.io/badge/SPIFFS-Sistema%20de%20archivos-yellow)
 
-## Descripción General
+Un **servidor web local** alojado en el ESP32 que permite interactuar con el hardware desde una interfaz gráfica accesible en cualquier navegador conectado a la misma red WiFi. La página muestra sensores en tiempo real y controla cinco LEDs, sin necesidad de recargarse. Es la base de aplicaciones de domótica y monitoreo remoto.
 
-Este es el segundo proyecto de una serie dedicada al Internet de las Cosas (IoT). En esta práctica se implementa un **servidor web local** en el ESP32 que permite a los usuarios interactuar con el hardware a través de una interfaz gráfica accesible desde cualquier navegador en la misma red WiFi.
-
-<p align="center">
-   <img src="media/Servidor_web_computadora.png" width="800">
-   <br>
-   <em>Figura: Servidor web local</em>
-</p>
-
-El sistema permite:
-
-- **Monitorear** en tiempo real los valores de un potenciómetro y una fotoresistencia (sensores analógicos) mediante actualizaciones automáticas cada segundo.
-- **Controlar** el encendido/apagado de tres LEDs (LED1, LED2, LED3) mediante interruptores tipo switch en la interfaz web.
-- **Ajustar** el brillo de dos LEDs (LED4 y LED5) mediante controles deslizantes (PWM), con valores de 0 a 255.
-
-La comunicación entre el cliente (navegador) y el servidor (ESP32) se realiza mediante peticiones **AJAX**, lo que permite actualizar los datos y enviar comandos sin necesidad de recargar la página. Los archivos de la interfaz web (HTML, CSS, JavaScript) se almacenan en el sistema de archivos **SPIFFS** del ESP32, facilitando su organización y modificación.
-
-## Componentes Necesarios
-
-| Componente               | Cantidad | Notas                                           |
-|--------------------------|----------|-------------------------------------------------|
-| ESP32 (cualquier modelo) | 1        | Se usa como servidor web                        |
-| Potenciómetro            | 1        | Valor recomendado: 10kΩ                         |
-| Fotoresistencia (LDR)    | 1        | Por ejemplo, GL5528                             |
-| LEDs (colores variados)  | 5        | Pueden ser de 5mm o 3mm                         |
-| Resistencias de 220Ω     | 5        | Para limitar corriente en los LEDs              |
-| Resistor de 10kΩ         | 1        | Para la fotoresistencia (divisor de tensión)    |
-| Protoboard y cables      | -        | Para realizar las conexiones                     |
-
-## Diagrama de Conexiones
-
-A continuación se describen las conexiones físicas entre los componentes y el ESP32:
-
-| Componente          | Pin del ESP32 | Notas                                                          |
-|---------------------|---------------|----------------------------------------------------------------|
-| LED1                | GPIO 14       | Ánodo al pin, cátodo a GND (con resistencia de 220Ω)          |
-| LED2                | GPIO 27       | Igual que LED1                                                 |
-| LED3                | GPIO 26       | Igual que LED1                                                 |
-| LED4                | GPIO 25       | Igual que LED1 (salida PWM)                                    |
-| LED5                | GPIO 33       | Igual que LED1 (salida PWM)                                    |
-| Potenciómetro       | GPIO 35       | Pin central al ADC, extremos a 3.3V y GND                      |
-| Fotoresistencia     | GPIO 34       | Conectar en serie con una resistencia de 10kΩ a GND; el punto medio al pin ADC; el otro extremo a 3.3V |
-
-**Nota:** La fotoresistencia forma un divisor de tensión con la resistencia de 10kΩ. La tensión en el pin ADC varía con la luz incidente.
+</div>
 
 <p align="center">
-   <img src="media/conexion_protoboard.jpeg" width="350">
-   <img src="media/conexion_placa_esp32.jpeg" width="350">
+   <img src="media/Servidor_web_computadora.png" width="800" alt="Interfaz web del ESP32">
    <br>
-   <em>Figura: Montaje físico</em>
+   <em>Figura: Interfaz del servidor web local</em>
 </p>
 
+[← Volver al índice de proyectos](../../README.md)
 
-## Configuración del Entorno
+---
 
-### Arduino IDE
+## Qué hace
 
-1. Instala el soporte para ESP32 en el Arduino IDE siguiendo la [guía oficial](https://github.com/espressif/arduino-esp32).
-2. Instala las librerías necesarias (puedes usar el Gestor de Librerías):
-   - **ESPAsyncWebServer** (de me-no-dev)
-   - **AsyncTCP** (de me-no-dev)
-3. Instala el plugin para subir archivos a SPIFFS:
-   - Descarga el plugin **ESP32FS** desde [aquí](https://github.com/me-no-dev/arduino-esp32fs-plugin/releases/).
-   - Descomprímelo en la carpeta `tools` de tu directorio de Arduino (por ejemplo, `C:\Program Files (x86)\Arduino\tools`).
-   - Reinicia el IDE. Verás una nueva opción en el menú "Herramientas": **ESP32 Sketch Data Upload**.
-4. Prepara los archivos web:
-   - Crea una carpeta llamada `data` dentro de la carpeta de tu sketch.
-   - Coloca dentro los archivos `index.html`, `style.css` y `script.js`.
+- **Monitorea** un potenciómetro y una fotoresistencia con actualización automática cada segundo.
+- **Enciende y apaga** tres LEDs (LED 1, 2 y 3) con interruptores tipo *switch*.
+- **Ajusta el brillo** de dos LEDs (LED 4 y 5) con deslizadores (PWM de 0 a 255).
+- Actualiza datos y envía comandos mediante peticiones **AJAX**, sin recargar la página.
+- Sirve la interfaz (HTML, CSS y JavaScript) desde el sistema de archivos **SPIFFS** del ESP32, lo que facilita modificarla sin tocar el firmware.
+
+## Cómo funciona
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador
+    participant E as ESP32 (puerto 80)
+
+    N->>E: GET /
+    E-->>N: index.html (con el estado actual de los LEDs)
+    N->>E: GET /style.css y /script.js
+    E-->>N: archivos desde SPIFFS
+
+    loop cada 1 s
+        N->>E: GET /sensorData
+        E-->>N: "potenciómetro,fotoresistencia"
+    end
+
+    N->>E: GET /update?output=...&state=1
+    E->>E: enciende o apaga LED 1–3
+    N->>E: GET /slider?value=128
+    E->>E: PWM en LED 4
+```
+
+### Rutas del servidor
+
+| Ruta (método) | Descripción |
+|---|---|
+| `/` (GET) | Sirve `index.html` procesando los *placeholders* |
+| `/style.css` (GET) | Sirve la hoja de estilos |
+| `/script.js` (GET) | Sirve el JavaScript del cliente |
+| `/sensorData` (GET) | Devuelve los dos valores de los sensores en CSV (dos números separados por coma) |
+| `/update` (GET) | Recibe `output` y `state` para encender o apagar los LEDs 1, 2 y 3 |
+| `/slider` (GET) | Recibe un valor de 0 a 255 y ajusta el PWM del LED 4 |
+| `/slider2` (GET) | Recibe un valor de 0 a 255 y ajusta el PWM del LED 5 |
+
+## Componentes necesarios
+
+| Componente | Cantidad | Notas |
+|---|:-:|---|
+| ESP32 | 1 | Actúa como servidor web |
+| Potenciómetro | 1 | Valor recomendado: 10 kΩ |
+| Fotoresistencia (LDR) | 1 | Por ejemplo, GL5528 |
+| LEDs (colores variados) | 5 | De 5 mm o 3 mm |
+| Resistencias de 220 Ω | 5 | Limitan la corriente de los LEDs |
+| Resistor de 10 kΩ | 1 | Divisor de tensión de la fotoresistencia |
+| Protoboard y cables | — | Para las conexiones |
+
+## Diagrama de conexiones
+
+Usa también el [mapa de pines compartido](../../media/PinMapEsp32IoT.jpg) del repositorio.
+
+| Componente | Pin del ESP32 | Notas |
+|---|:-:|---|
+| LED 1 | GPIO 14 | Ánodo al pin, cátodo a GND (con resistencia de 220 Ω) |
+| LED 2 | GPIO 27 | Igual que LED 1 |
+| LED 3 | GPIO 26 | Igual que LED 1 |
+| LED 4 | GPIO 25 | Igual que LED 1 (salida PWM) |
+| LED 5 | GPIO 33 | Igual que LED 1 (salida PWM) |
+| Potenciómetro | GPIO 35 | Pin central al ADC; extremos a 3.3 V y GND |
+| Fotoresistencia | GPIO 34 | En serie con una resistencia de 10 kΩ a GND; el punto medio al pin ADC y el otro extremo a 3.3 V |
+
+> La fotoresistencia forma un **divisor de tensión** con la resistencia de 10 kΩ: el voltaje en el pin ADC cambia con la luz incidente.
+
+
+## Cómo probarlo
+
+### 1. Prepara el entorno
+
+- Instala el soporte para ESP32 en el Arduino IDE siguiendo la [guía oficial](https://github.com/espressif/arduino-esp32). El sketch usa `ledcAttachChannel`, por lo que necesita la versión **3.x** del paquete.
+- Instala las librerías **ESPAsyncWebServer** y **AsyncTCP** (ambas de me-no-dev).
+- Instala el plugin para subir archivos a SPIFFS (instrucciones para Arduino IDE 1.x):
+  1. Descarga **ESP32FS** desde [sus *releases*](https://github.com/me-no-dev/arduino-esp32fs-plugin/releases/).
+  2. Descomprímelo en la carpeta `tools` de tu directorio de Arduino (por ejemplo, `C:\Program Files (x86)\Arduino\tools`).
+  3. Reinicia el IDE. Aparecerá la opción **ESP32 Sketch Data Upload** en el menú *Herramientas*.
+
+### 2. Prepara los archivos web
+
+Crea una carpeta `data` junto al archivo `.ino` y coloca dentro `index.html`, `style.css` y `script.js`.
 
 <p align="center">
-   <img src="media/carpetas.png" width="650">
+   <img src="media/carpetas.png" width="600" alt="Carpeta data junto al archivo .ino">
    <br>
-   <em>Figura: Carpeta data en el mismo directorio que el archivo .ino</em>
+   <em>Figura: La carpeta data en el mismo directorio que el archivo .ino</em>
 </p>
 
-5. Sube los archivos a SPIFFS:
-   - Conecta tu ESP32.
-   - En el menú "Herramientas", selecciona el puerto correcto.
-   - Haz clic en **Herramientas > ESP32 Sketch Data Upload**. Esto subirá los archivos a la memoria flash del ESP32.
+### 3. Sube los archivos a SPIFFS
+
+Con el ESP32 conectado y el puerto seleccionado, elige **Herramientas › ESP32 Sketch Data Upload**. Esto copia los archivos web a la memoria flash de la placa.
 
 <p align="center">
-   <img src="media/sketch_data.png" width="650">
+   <img src="media/sketch_data.png" width="600" alt="Opción ESP32 Sketch Data Upload">
    <br>
-   <em>Figura: Subir archivos</em>
+   <em>Figura: Subida de los archivos web</em>
 </p>
 
-6. Abre el código principal (el archivo `.ino`), ajusta las credenciales WiFi y súbelo a la placa.
-7. Espera a que la placa se conecte a la red WiFi.
-8. Una vez conectado, copia la dirección IP del monitor serie y pegala en el navegador. Debes estar conectado a la misma red para acceder. 
+### 4. Carga el programa y conéctate
 
-## Explicación del Código
+1. Abre el `.ino` y edita tus credenciales de WiFi:
 
-### Código principal (Arduino)
+   ```cpp
+   const char* ssid     = "Nombre de la RED wifi";
+   const char* password = "Contraseña de la RED";
+   ```
 
-El código del ESP32 se encarga de:
+2. Carga el sketch y abre el Monitor Serie a 115200 baudios.
+3. Espera a que el ESP32 se conecte y copia la **dirección IP** que aparece (por ejemplo, `192.168.1.100`).
+4. Desde un dispositivo en la misma red WiFi, pega esa IP en el navegador.
 
-- Conectar a la red WiFi y mostrar la dirección IP asignada.
-- Inicializar el sistema de archivos SPIFFS y cargar los archivos web.
-- Configurar el servidor asíncrono en el puerto 80.
-- Definir rutas (endpoints) para servir la página principal, los archivos estáticos, y para recibir peticiones de actualización de LEDs y sliders.
-- Leer los valores analógicos del potenciómetro y la fotoresistencia cuando se solicita.
+### 5. Usa la interfaz
 
-### Rutas principales:
-
-Ruta (método): Descripción
-
-- `/` (GET): Sirve el archivo index.html procesando placeholders.
-- `/style.css` (GET): Sirve el archivo CSS.
-- `/script.js` (GET): Sirve el archivo JavaScript.
-- `/sensorData` (GET): Devuelve los valores de los sensores en formato CSV (dos números separados por coma).
-- `/update` (GET): Recibe parámetros "output" y "state" para encender/apagar los LEDs 1, 2 y 3.
-- `/slider` (GET): Recibe el valor (0-255) para el LED4 y ajusta el PWM.
-- `/slider2` (GET): Recibe el valor (0-255) para el LED5 y ajusta el PWM.
-
-`Función processor`: Reemplaza los placeholders en el HTML (como %BUTTONPLACEHOLDER% y %SLIDERVALUE%) con el estado actual de los LEDs y el valor del slider. Esto permite que la página se cargue mostrando el estado correcto de los interruptores y el valor del slider.
-
-`PWM`: Se utilizan dos canales PWM independientes: canal 0 para LED4 y canal 1 para LED5. Ambos configurados con frecuencia de 1 kHz y resolución de 8 bits, permitiendo valores de 0 a 255.
-
-### Archivos Web
-
-- **index.html**: Estructura de la página, dividida en secciones de sensores y controles. Incluye referencias a los archivos CSS y JavaScript. Los elementos tienen identificadores (id) que son utilizados por el JavaScript para actualizarlos.
-- **style.css**: Define la apariencia visual. Incluye estilos para el cuerpo, encabezados, secciones, interruptores tipo switch (con colores diferentes para LED2) y los sliders personalizados (con thumb morado y efectos hover).
-- **script.js**: Contiene la lógica del lado del cliente:
-  - `toggleCheckbox(element)`: Se ejecuta al cambiar un interruptor. Crea una petición AJAX a /update con el id del elemento y el estado (1 u 0).
-  - `setInterval`: Cada 1000 ms (1 segundo) realiza una petición AJAX a /sensorData, procesa la respuesta (divide por coma) y actualiza los elementos span con los nuevos valores del potenciómetro y la fotoresistencia
-  - `updateSliderPWM(element)`: Se llama al cambiar el slider del LED4. Actualiza el texto del span con el valor actual y envía una petición AJAX a /slider con el valor.
-  - `updateSliderPWM2(element)`: Similar para el LED5, pero enviando a /slider2.
-
-## Instrucciones de Uso
-
-1. Arma el circuito según el diagrama de conexiones.
-
-2. Configura las credenciales WiFi en el código (ssid y password).
-
-3. Sube los archivos web a SPIFFS usando el método correspondiente (Arduino IDE o PlatformIO).
-
-4. Carga el programa principal al ESP32.
-
-5. Abre el monitor serie para ver la dirección IP asignada al ESP32 (por ejemplo, 192.168.1.100).
-
-6. Conecta tu dispositivo (ordenador, tablet, móvil) a la misma red WiFi.
-
-7. Abre un navegador web y escribe la dirección IP del ESP32.
-
-8. Interactúa con la interfaz:
-
-  - Los valores del potenciómetro y la fotoresistencia se actualizan automáticamente.
-  - Usa los interruptores para encender/apagar LED1, LED2 y LED3.
-  - Mueve los deslizadores para ajustar el brillo de LED4 y LED5.
-
-9. Observa los mensajes de depuración en el monitor serie para verificar la recepción de comandos.
+- Los valores del potenciómetro y la fotoresistencia se actualizan solos.
+- Los interruptores encienden y apagan los LED 1, 2 y 3.
+- Los deslizadores ajustan el brillo de los LED 4 y 5.
+- El Monitor Serie registra cada comando recibido.
 
 <p align="center">
-   <img src="media/funcionamiento.jpeg" width="350">
+   <img src="media/funcionamiento.jpeg" width="350" alt="Sistema funcionando">
    <br>
-   <em>Figura: Funcionamiento</em>
+   <em>Figura: Funcionamiento del sistema</em>
 </p>
 
-## Posibles Mejoras
+## Explicación del código
 
-- Añadir autenticación mediante usuario y contraseña.
-- Implementar un gráfico en tiempo real de los valores de los sensores (por ejemplo, con Chart.js).
-- Incluir más sensores (temperatura, humedad, etc.) y mostrarlos en la interfaz.
-- Agregar la posibilidad de guardar configuraciones (valores de PWM) en la EEPROM.
-- Extender el sistema a Internet mediante un túnel (ngrok) o servicios en la nube (MQTT, Blynk).
-- Mejorar el diseño responsive para dispositivos móviles.
+### Firmware (Arduino)
+
+- Se conecta a WiFi, muestra la IP asignada e inicializa SPIFFS.
+- Configura el servidor asíncrono en el puerto 80 y define las rutas de la tabla anterior.
+- Lee los sensores analógicos cuando el cliente los solicita.
+- **Función `processor`:** reemplaza los *placeholders* del HTML (`%BUTTONPLACEHOLDER%`, `%SLIDERVALUE%`) con el estado actual de los LEDs y el valor del deslizador, de modo que la página cargue reflejando el estado real.
+- **PWM:** dos canales independientes (canal 0 para el LED 4 y canal 1 para el LED 5), a 1 kHz y 8 bits de resolución (valores de 0 a 255).
+
+### Archivos web
+
+- **`index.html`:** estructura de la página, dividida en secciones de sensores y controles, con identificadores (`id`) que usa el JavaScript.
+- **`style.css`:** apariencia de la interfaz, incluidos los interruptores y los deslizadores personalizados.
+- **`script.js`:** lógica del cliente:
+  - `toggleCheckbox(element)`: al cambiar un interruptor, envía a `/update` el LED y su estado (1 u 0).
+  - `setInterval`: cada 1000 ms consulta `/sensorData`, separa la respuesta por la coma y actualiza los valores en pantalla.
+  - `updateSliderPWM(element)` y `updateSliderPWM2(element)`: muestran el valor del deslizador y lo envían a `/slider` y `/slider2`.
+
+## Limitaciones y mejoras posibles
+
+- **Sin autenticación:** cualquiera en la misma red puede abrir la interfaz y controlar los LEDs. Agregar usuario y contraseña resolvería esto.
+- **Gráficas en tiempo real:** mostrar la evolución de los sensores con una librería como Chart.js.
+- **Más sensores:** incorporar temperatura y humedad (DHT11) a la interfaz.
+- **Persistencia:** guardar los valores de PWM en memoria no volátil para conservarlos tras un reinicio.
+- **Acceso desde Internet:** extender el sistema con un túnel (por ejemplo, ngrok) o servicios en la nube como MQTT o Blynk.
+- **Diseño responsivo:** mejorar la interfaz en dispositivos móviles.
 
 ## Autor
 
-Nombre: Pichardo Rico Cristian Eduardo
+**Cristian Eduardo Pichardo Rico**
 
-## Licencia
+Egresado de la Licenciatura en Física, Facultad de Ciencias, UNAM
+GitHub: [@Edvard-Pichardo](https://github.com/Edvard-Pichardo)
 
-Este proyecto está bajo la licencia MIT. Puedes ver el archivo LICENSE para más detalles.
+Distribuido bajo la licencia **MIT**. Consulta el archivo [LICENSE](../../LICENSE).
