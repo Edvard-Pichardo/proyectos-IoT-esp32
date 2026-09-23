@@ -1,155 +1,150 @@
-# Proyecto IoT: Control Bluetooth con ESP32 y Sensor DHT11
+<div align="center">
 
-![ESP32](https://img.shields.io/badge/ESP32-Desarrollo-blue) ![Bluetooth](https://img.shields.io/badge/Bluetooth-SPP-green) ![DHT11](https://img.shields.io/badge/Sensor-DHT11-orange)
+# Proyecto 1: Control por Bluetooth con ESP32 y Sensor DHT11
 
-## Descripción General 
+![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue)
+![Bluetooth](https://img.shields.io/badge/Comunicaci%C3%B3n-Bluetooth%20SPP-green)
+![DHT11](https://img.shields.io/badge/Sensor-DHT11-orange)
+![Arduino](https://img.shields.io/badge/IDE-Arduino-00979D?logo=arduino&logoColor=white)
 
-En esta práctica se implementa un sistema de control y monitoreo utilizando un **ESP32** que se comunica vía **Bluetooth** con un dispositivo externo (como un smartphone o computadora). 
+Sistema de control y monitoreo en el que un **ESP32** se comunica por **Bluetooth clásico (perfil SPP)** con un smartphone o computadora. Desde una aplicación de terminal Bluetooth se controlan cinco LEDs, y al presionar dos pulsadores físicos el ESP32 envía de vuelta la temperatura y la humedad medidas por un sensor DHT11. La comunicación es **bidireccional y en tiempo real**.
 
-El sistema permite:
-
-- Encender y apagar 5 LEDs de forma individual o todos a la vez mediante comandos enviados por Bluetooth.
-- Leer la temperatura y la humedad desde un sensor **DHT11** al presionar dos pulsadores físicos conectados al ESP32, y enviar los datos al dispositivo conectado por Bluetooth.
-
-El código está desarrollado en el entorno de Arduino (compatible con PlatformIO) y hace uso de las librerías `BluetoothSerial` y `DHT` para manejar la comunicación y el sensor.
-
-## Componentes Necesarios
-
-| Componente               | Cantidad | Notas                                           |
-|--------------------------|----------|-------------------------------------------------|
-| ESP32 (cualquier modelo) | 1        | Se usa el puerto serie y Bluetooth              |
-| Sensor DHT11             | 1        | Para medir temperatura y humedad                |
-| LEDs (colores variados)  | 5        | Pueden ser de 5mm o 3mm                         |
-| Resistencias de 220Ω     | 5        | Para limitar corriente en los LEDs              |
-| Pulsadores (push buttons)| 2        | Uno con pull-down, otro con pull-up interno     |
-| Resistor 10kΩ (para SW1) | 1        | Solo necesario si se usa pull-down externo      |
-| Protoboard y cables      | -        | Para realizar las conexiones                    |
+</div>
 
 <p align="center">
-   <img src="media/Conexion_bluetooth.jpeg" width="200">
-   <img src="media/ESP32_utilizado.jpeg" width="200">
-   <br>
-   <em>Figura: Montaje físico del programa</em>
+   <img src="media/Prueba_funcionamiento.jpeg" width="420" alt="Sistema funcionando">
 </p>
 
-## Diagrama de Conexiones
+[← Volver al índice de proyectos](../../README.md)
 
-A continuación se describen las conexiones físicas entre los componentes y el ESP32:
+---
 
-| Componente      | Pin del ESP32 | Notas                                                          |
-|-----------------|---------------|----------------------------------------------------------------|
-| LED1            | GPIO 14       | Ánodo al pin, cátodo a GND (con resistencia de 220Ω)          |
-| LED2            | GPIO 27       | Igual que LED1                                                 |
-| LED3            | GPIO 26       | Igual que LED1                                                 |
-| LED4            | GPIO 25       | Igual que LED1                                                 |
-| LED5            | GPIO 33       | Igual que LED1                                                 |
-| Pulsador SW1    | GPIO 15       | Conectar entre el pin y VCC (3.3V) con resistencia pull-down de 10kΩ a GND |
-| Pulsador SW2    | GPIO 4        | Conectar entre el pin y GND (usando resistencia pull-up interna del ESP32) |
-| Sensor DHT11    | GPIO 32       | VCC a 3.3V, GND a GND, Data al pin 32                          |
+## Qué hace
 
-**Nota:** Para SW2 se utiliza la resistencia pull-up interna del ESP32, por lo que no se requiere resistor externo; el pin se conecta directamente a GND cuando se presiona.
+- **Enciende** cada uno de los 5 LEDs por separado con los comandos `1` a `5`, y **apaga todos** a la vez con `0`.
+- **Envía la temperatura** (°C y °F) por Bluetooth al presionar el pulsador SW1.
+- **Envía la humedad relativa** por Bluetooth al presionar el pulsador SW2.
+- Responde con un mensaje de error si recibe un comando no válido o si el sensor no logra leer.
+- Aplica un **antirrebote por software** (250 ms) a los pulsadores.
 
-## Configuración del Entorno
+## Cómo funciona
 
-### Arduino IDE
+```mermaid
+flowchart LR
+    PHONE["Smartphone / PC<br/>(app de terminal Bluetooth)"]
+    subgraph ESP32
+        BT["BluetoothSerial<br/>(SPP)"]
+        LEDS["5 LEDs"]
+        DHT["DHT11"]
+        SW["Pulsadores<br/>SW1 y SW2"]
+    end
 
-1. Instala el soporte para ESP32 en el Arduino IDE siguiendo la [guía oficial](https://github.com/espressif/arduino-esp32).
-2. Instala las librerías necesarias:
-   - **BluetoothSerial** (viene incluida con el paquete de ESP32).
-   - **DHT sensor library** de Adafruit (búscala en el Gestor de Librerías).
-3. Selecciona la placa **ESP32 Dev Module** y el puerto COM correspondiente.
-4. Copia el código proporcionado y súbelo a tu ESP32.
+    PHONE -- "comandos 0–5" --> BT
+    BT --> LEDS
+    SW -- "temperatura / humedad" --> DHT
+    DHT --> BT
+    BT -- "lecturas" --> PHONE
+```
 
-## Explicación del Código
+## Comandos y respuestas
 
-El código está organizado en varias secciones:
+| Entrada | Acción |
+|:-:|---|
+| `1` – `5` (Bluetooth) | Enciende el LED 1 al 5 |
+| `0` (Bluetooth) | Apaga todos los LEDs |
+| Otro carácter | El ESP32 responde `Error, ingrese un comando válido` |
+| Pulsador **SW1** | Envía `Temperatura: <valor>°C ; <valor>°F` |
+| Pulsador **SW2** | Envía `Humedad: <valor>%` |
 
-1. Inclusión de librerías y definiciones de pines: Se definen los pines para LEDs, pulsadores y el sensor DHT, así como un array con los LEDs para facilitar el control.
+## Componentes necesarios
 
-2. Configuración de Bluetooth: Se crea un objeto BluetoothSerial con el nombre "ESP32_EPichardo". Se registra una función callback_function que maneja los eventos de conexión y los datos recibidos.
-
-3. Manejo de comandos por Bluetooth:
-
-- Cuando se recibe un byte, se interpreta su valor ASCII.
-
-- Si es '1' (ASCII 49) se enciende LED1, '2' para LED2, etc.
-
-- Si es '0' (ASCII 48) se apagan todos los LEDs.
-
-- Cualquier otro carácter envía un mensaje de error.
-
-4. Lectura de sensores con pulsadores:
-
-- En el loop() se monitorean los dos botones.
-
-- Al presionar SW1 se lee la temperatura en grados Celsius y Fahrenheit y se envía por Bluetooth.
-
-- Al presionar SW2 se lee la humedad y se envía por Bluetooth.
-
-- Se utiliza un anti-rebote simple con millis() para evitar múltiples lecturas.
-
-- Función callback: Se encarga de imprimir en el monitor serie los eventos de Bluetooth y de procesar los datos entrantes.
+| Componente | Cantidad | Notas |
+|---|:-:|---|
+| ESP32 (con Bluetooth clásico) | 1 | Se usan el puerto serie y el Bluetooth |
+| Sensor DHT11 | 1 | Temperatura y humedad |
+| LEDs (colores variados) | 5 | De 5 mm o 3 mm |
+| Resistencias de 220 Ω | 5 | Limitan la corriente de los LEDs |
+| Pulsadores | 2 | Uno con pull-down externo y otro con pull-up interno |
+| Resistor de 10 kΩ | 1 | Solo para el pull-down externo de SW1 |
+| Protoboard y cables | — | Para las conexiones |
 
 <p align="center">
-   <img src="media/Monitor_Serie_ArduinoIDE.png" width="800">
+   <img src="media/Conexion_bluetooth.jpeg" width="200" alt="Conexiones en la protoboard">
+   <img src="media/ESP32_utilizado.jpeg" width="200" alt="ESP32 utilizado">
    <br>
-   <em>Figura: Respuestas del monitor serie del IDe de Arduino</em>
+   <em>Figura: Montaje físico del proyecto</em>
 </p>
 
-## Instrucciones de Uso
+## Diagrama de conexiones
 
-- Alimenta el ESP32 (por USB o fuente externa).
+Usa también el [mapa de pines compartido](../../media/PinMapEsp32IoT.jpg) del repositorio.
 
-- Abre el monitor serie (115200 baudios) para ver mensajes de depuración.
+| Componente | Pin del ESP32 | Notas |
+|---|:-:|---|
+| LED 1 | GPIO 14 | Ánodo al pin, cátodo a GND (con resistencia de 220 Ω) |
+| LED 2 | GPIO 27 | Igual que LED 1 |
+| LED 3 | GPIO 26 | Igual que LED 1 |
+| LED 4 | GPIO 25 | Igual que LED 1 |
+| LED 5 | GPIO 33 | Igual que LED 1 |
+| Pulsador SW1 | GPIO 15 | Entre el pin y 3.3 V, con resistencia pull-down de 10 kΩ a GND (activo en alto) |
+| Pulsador SW2 | GPIO 4 | Entre el pin y GND, con la resistencia pull-up interna del ESP32 (activo en bajo) |
+| Sensor DHT11 | GPIO 32 | VCC a 3.3 V, GND a GND, Data al pin |
 
-- Empareja tu dispositivo (smartphone, PC) con el Bluetooth llamado "Nombre_dispositivo".
+## Cómo probarlo
 
-- Usa una aplicación de terminal Bluetooth (por ejemplo, "Serial Bluetooth Terminal" en Android) para conectarte al ESP32.
+**1. Prepara el entorno.**
 
-- Envía comandos:
+- Instala el soporte para ESP32 en el Arduino IDE siguiendo la [guía oficial](https://github.com/espressif/arduino-esp32).
+- Instala la librería **DHT sensor library** de Adafruit (y **Adafruit Unified Sensor**) desde el Gestor de bibliotecas. `BluetoothSerial` ya viene incluida con el paquete de ESP32.
+- Selecciona la placa **ESP32 Dev Module** y el puerto correspondiente.
 
-1 -> Enciende LED1
+> `BluetoothSerial` usa Bluetooth clásico, por lo que requiere el ESP32 original: los modelos S2, S3 y C3 no lo incluyen.
 
-2 -> Enciende LED2
+**2. Elige el nombre Bluetooth.** En el sketch, cambia el nombre con el que aparecerá tu dispositivo:
 
-3 -> Enciende LED3
+```cpp
+BT.begin("Nombre_dispositivo");
+```
 
-4 -> Enciende LED4
-
-5 -> Enciende LED5
-
-0 -> Apaga todos los LEDs
-
-- Presiona los botones físicos:
-
-- - SW1: Envía la temperatura actual (°C y °F).
-
-- - SW2: Envía la humedad actual (%).
-
-Verás las lecturas en la terminal Bluetooth.
+**3. Carga el sketch** y abre el Monitor Serie a **115200 baudios** para ver los mensajes de depuración.
 
 <p align="center">
-   <img src="media/Serial_Bluetooth_Terminal.jpeg" width="200">
-   <img src="media/Prueba_funcionamiento.jpeg" width="400">
+   <img src="media/Monitor_Serie_ArduinoIDE.png" width="700" alt="Monitor serie del Arduino IDE">
    <br>
-   <em>Figura: Funcionamiento del sistema</em>
+   <em>Figura: Mensajes del monitor serie del Arduino IDE</em>
 </p>
 
-## Posibles Mejoras
+**4. Empareja tu dispositivo** (smartphone o PC) con el Bluetooth del ESP32 y conéctate con una app de terminal Bluetooth, por ejemplo *Serial Bluetooth Terminal* en Android.
 
-- Implementar un sistema de autenticación para evitar conexiones no deseadas.
+**5. Interactúa.** Envía `1` a `5` para encender LEDs, `0` para apagarlos todos, y presiona SW1 o SW2 para recibir las lecturas del sensor en la terminal.
 
-- Añadir control de brillo PWM para los LEDs.
+<p align="center">
+   <img src="media/Serial_Bluetooth_Terminal.jpeg" width="200" alt="App Serial Bluetooth Terminal">
+   <br>
+   <em>Figura: Comunicación desde la terminal Bluetooth</em>
+</p>
 
-- Integrar con un broker MQTT para convertir el proyecto en IoT completo.
+## Explicación del código
 
-- Usar una aplicación móvil personalizada con botones gráficos.
+1. **Librerías y pines:** se definen los pines de LEDs, pulsadores y DHT, junto con un arreglo con los LEDs para manejarlos en bucles.
+2. **Bluetooth:** se crea un objeto `BluetoothSerial` y se registra una función *callback* que atiende los eventos de conexión, desconexión y datos recibidos.
+3. **Comandos:** cada byte recibido se interpreta por su valor ASCII (`'1'` = 49 … `'5'` = 53 encienden LEDs; `'0'` = 48 los apaga todos). Los saltos de línea se ignoran.
+4. **Lectura con pulsadores:** en `loop()` se vigilan SW1 y SW2; al presionarlos se lee el DHT11 y se envía el dato por Bluetooth. El antirrebote usa `millis()`.
 
-- Almacenar lecturas en una tarjeta SD o enviarlas a la nube.
+## Limitaciones y mejoras posibles
+
+- **Apagado individual:** hoy solo se puede encender cada LED por separado; añadir comandos de apagado o de alternancia (*toggle*) daría control completo.
+- **Sin autenticación:** cualquier dispositivo que se empareje puede controlar el sistema. Se puede agregar un PIN de emparejamiento.
+- **Control de brillo:** incorporar PWM para atenuar los LEDs.
+- **Integración con MQTT:** conectar el sistema a un broker, como se hace en el [proyecto 3](../03_comunicacion_mqtt/).
+- **Registro de datos:** guardar las lecturas en una tarjeta SD o enviarlas a la nube.
+- **App personalizada:** sustituir la terminal genérica por una aplicación móvil con botones gráficos.
 
 ## Autor
 
-Nombre: Pichardo Rico Cristian Eduardo
+**Cristian Eduardo Pichardo Rico**
 
-## Licencia
-Este proyecto está bajo la licencia MIT. Puedes ver el archivo LICENSE para más detalles.
+Egresado de la Licenciatura en Física, Facultad de Ciencias, UNAM
+GitHub: [@Edvard-Pichardo](https://github.com/Edvard-Pichardo)
+
+Distribuido bajo la licencia **MIT**. Consulta el archivo [LICENSE](../../LICENSE).
