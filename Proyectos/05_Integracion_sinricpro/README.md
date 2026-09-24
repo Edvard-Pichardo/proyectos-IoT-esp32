@@ -1,133 +1,91 @@
-# Proyecto IoT 5: Control por Voz con SinricPro (Alexa / Google Home)
+<div align="center">
 
-![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue) ![SinricPro](https://img.shields.io/badge/Plataforma-SinricPro-brightgreen) ![Alexa](https://img.shields.io/badge/Asistente-Alexa-00BFFF) ![Google Home](https://img.shields.io/badge/Asistente-Google%20Home-FFD700) ![Control por Voz](https://img.shields.io/badge/Funcionalidad-Control%20por%20Voz-red)
+# Proyecto 5: Control por Voz con SinricPro (Alexa / Google Home)
 
-## Descripción General
+![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue)
+![SinricPro](https://img.shields.io/badge/Nube-SinricPro-orange)
+![Voz](https://img.shields.io/badge/Voz-Alexa%20%7C%20Google%20Home-4285F4)
+![Arduino](https://img.shields.io/badge/IDE-Arduino-00979D?logo=arduino&logoColor=white)
 
-Este es el quinto proyecto de la serie IoT, en el cual se implementa el control de dispositivos mediante **comandos de voz** utilizando **Alexa** o **Google Home** a través de la plataforma **SinricPro**. El ESP32 se conecta a WiFi y se registra en la nube de SinricPro, permitiendo que los asistentes de voz envíen órdenes de encendido/apagado a tres LEDs (o relés) conectados al microcontrolador.
+El ESP32 se integra con la plataforma en la nube **SinricPro** para que tres dispositivos (LEDs o relés) puedan controlarse con **comandos de voz** desde Alexa o Google Home. Cada dispositivo se registra en la nube con un ID único y se enlaza a una función *callback* que cambia el estado del pin al recibir una orden de encendido o apagado.
 
-**Características principales:**
-- Control de tres dispositivos (LEDs/relés) mediante comandos de voz.
-- Integración con Alexa y Google Home a través de SinricPro.
-- Comunicación mediante WebSockets para respuesta en tiempo real.
-- Configuración sencilla a través del portal de SinricPro.
-- Callbacks para manejar los cambios de estado de cada dispositivo.
+</div>
 
-Este proyecto demuestra cómo integrar dispositivos IoT con los ecosistemas de domótica más populares, facilitando el control por voz sin necesidad de aplicaciones móviles adicionales.
+[← Volver al índice de proyectos](../../README.md)
 
-## Componentes Necesarios
+---
 
-| Componente               | Cantidad | Notas                                           |
-|--------------------------|----------|-------------------------------------------------|
-| ESP32 (cualquier modelo) | 1        | Cliente WiFi y controlador                       |
-| LEDs (colores variados)  | 3        | Con resistencias de 220Ω                        |
-| Resistencias de 220Ω     | 3        | Para los LEDs                                   |
-| Protoboard y cables      | -        | Para las conexiones                             |
+## Qué hace
 
-**Opcional:** En lugar de LEDs, se pueden utilizar relés para controlar dispositivos de mayor potencia (lámparas, electrodomésticos, etc.).
+- Registra **tres interruptores** (*switches*) en SinricPro.
+- Aplica al instante las órdenes de encendido y apagado sobre tres LEDs (o relés).
+- Mantiene una conexión persistente por **WebSockets**, lo que da una respuesta rápida y confiable.
+- Desactiva el modo de ahorro de energía del WiFi y activa la reconexión automática para no perder la conexión con la nube.
 
-## Diagrama de Conexiones
+## Flujo de una orden de voz
 
-| Componente          | Pin del ESP32 | Notas                                                          |
-|---------------------|---------------|----------------------------------------------------------------|
-| LED1 (Switch 1)     | GPIO 14       | Ánodo al pin, cátodo a GND (con resistencia de 220Ω)          |
-| LED2 (Switch 2)     | GPIO 27       | Igual que LED1                                                 |
-| LED3 (Switch 3)     | GPIO 26       | Igual que LED1                                                 |
+```mermaid
+flowchart LR
+    U["🗣️ Usuario<br/>“Alexa, enciende la luz 1”"] --> A["Alexa /<br/>Google Home"]
+    A --> S["Nube<br/>SinricPro"]
+    S -- "WebSocket" --> E["ESP32<br/>callback onPowerState"]
+    E --> L["LED / relé"]
+```
 
-## Configuración del Entorno
+1. El asistente de voz interpreta la orden y la envía a SinricPro.
+2. SinricPro la reenvía al ESP32 por WebSocket.
+3. El ESP32 ejecuta el *callback* del dispositivo correspondiente y cambia el estado del pin.
 
-### Prerrequisitos
+## Componentes y conexiones
 
-1. **Crear una cuenta en SinricPro:**
-   - Visita [SinricPro](https://sinricpro.com/) y regístrate.
-   - Una vez dentro, ve al panel de control.
+Usa el [mapa de pines compartido](../../media/PinMapEsp32IoT.jpg) del repositorio.
 
-2. **Crear dispositivos (switches):**
-   - En el panel de SinricPro, haz clic en "Add Device".
-   - Selecciona "Switch" como tipo de dispositivo.
-   - Asigna un nombre (ej. "LED 1", "LED 2", "LED 3").
-   - Completa el proceso para cada uno de los tres switches.
-   - Anota los **Device IDs** que aparecen al crear cada dispositivo.
+| Dispositivo en SinricPro | Pin del ESP32 |
+|---|:-:|
+| Switch 1 (LED / relé 1) | GPIO 14 |
+| Switch 2 (LED / relé 2) | GPIO 27 |
+| Switch 3 (LED / relé 3) | GPIO 26 |
 
-3. **Obtener credenciales de la aplicación:**
-   - En el panel de SinricPro, ve a "Dashboard" o "Credentials".
-   - Copia el **APP_KEY** y **APP_SECRET**.
+## Cómo probarlo
 
-4. **Vincular con Alexa o Google Home:**
-   - En la aplicación de Alexa o Google Home, busca la habilidad "SinricPro".
-   - Inicia sesión con tus credenciales de SinricPro.
-   - Los dispositivos creados aparecerán automáticamente y podrás controlarlos por voz.
+**1. Configura SinricPro.**
 
-### Arduino IDE
+1. Crea una cuenta en [sinric.pro](https://sinric.pro/).
+2. Crea **tres dispositivos de tipo *Switch***. El nombre que les des es el que dirás al asistente de voz (por ejemplo, "luz 1").
+3. Copia tu `APP_KEY` y `APP_SECRET`, y el ID de cada dispositivo.
+4. Vincula SinricPro con tu asistente: habilita la *skill* en Alexa o enlaza el servicio en Google Home, y descubre los dispositivos.
 
-1. Instala el soporte para ESP32 en el Arduino IDE (guía oficial).
-2. Instala las siguientes librerías desde el Gestor de Librerías:
-   - **SinricPro** (de SinricPro) – maneja la conexión con la plataforma.
-   - **WiFi** (incluida con el core de ESP32).
-3. Selecciona la placa **ESP32 Dev Module** y el puerto COM correspondiente.
-4. Ajusta las credenciales WiFi, APP_KEY, APP_SECRET y los Device IDs en el código.
-5. Carga el programa al ESP32.
+**2. Librería** (Gestor de bibliotecas del Arduino IDE): `SinricPro`, junto con sus dependencias (`ArduinoJson` y `WebSockets`).
 
-## Explicación del Código
+**3. Configuración.** Edita las credenciales en el sketch:
 
-**Bibliotecas utilizadas:**
-- `WiFi.h`: Conexión a red WiFi (se adapta automáticamente a ESP8266, ESP32 o RP2040).
-- `SinricPro.h`: Biblioteca principal para la comunicación con la plataforma SinricPro.
-- `SinricProSwitch.h`: Para manejar dispositivos tipo switch (encendido/apagado).
+```cpp
+#define WIFI_SSID    "Nombre_red"
+#define WIFI_PASS    "Clave_red"
 
-**Configuración inicial:**
-- Se definen las credenciales WiFi, APP_KEY, APP_SECRET y los Device IDs de los tres switches.
-- Se configuran los pines de los LEDs como salida en `setupSinricPro()`.
-- Cada switch se asocia a su Device ID y se registra un callback para manejar los cambios de estado.
+#define APP_KEY      "App_key"
+#define APP_SECRET   "App_secret"
 
-**Funciones callback (`onPowerState1`, `onPowerState2`, `onPowerState3`):**
-- Se ejecutan cuando SinricPro recibe un comando de encendido/apagado desde Alexa o Google Home.
-- Reciben el `deviceId` (para identificar qué dispositivo) y el `state` (true/false).
-- Cambian el estado del LED correspondiente y envían un mensaje por el monitor serie.
-- Devuelven `true` para indicar que el comando fue procesado correctamente.
+#define SWITCH_ID_1  "id_1"
+#define SWITCH_ID_2  "id_2"
+#define SWITCH_ID_3  "id_3"
+```
 
-**Función `setupWiFi()`:**
-- Conecta el ESP32 a la red WiFi configurada.
-- Incluye configuraciones específicas para ESP8266 y ESP32 (desactivar modo de bajo consumo, auto-reconexión).
+**4. Carga el sketch**, abre el Monitor Serie a 115200 baudios y verifica que aparezcan los mensajes de conexión a WiFi y a SinricPro.
 
-**Función `setupSinricPro()`:**
-- Configura los pines de los LEDs como salida.
-- Asocia cada Device ID con su callback correspondiente.
-- Registra funciones para eventos de conexión/desconexión con SinricPro.
-- Inicia la conexión con `SinricPro.begin(APP_KEY, APP_SECRET)`.
+**5. Pruébalo por voz o desde la app.** Por ejemplo: *"Alexa, enciende la luz 1"* (según el nombre que hayas asignado). También puedes accionar los interruptores desde el panel de SinricPro o su aplicación.
 
-**Bucle `loop()`:**
-- Llama continuamente a `SinricPro.handle()` para mantener la conexión activa y procesar los mensajes entrantes de la nube.
 
-## Instrucciones de Uso
+## Limitaciones y mejoras posibles
 
-1. **Arma el circuito** según el diagrama de conexiones.
-2. **Crea tu cuenta en SinricPro** y obtén APP_KEY, APP_SECRET y los Device IDs.
-3. **Configura las credenciales WiFi** y los datos de SinricPro en el código.
-4. **Carga el programa** al ESP32.
-5. **Abre el monitor serie** (115200 baudios) para ver los mensajes de depuración.
-6. **Verifica la conexión:**
-   - El ESP32 se conectará a WiFi y luego a SinricPro.
-   - En el monitor serie verás "Connected to SinricPro".
-7. **Vincula SinricPro con Alexa o Google Home:**
-   - Abre la aplicación de Alexa o Google Home.
-   - Busca la habilidad "SinricPro" y actívala.
-   - Inicia sesión con tus credenciales de SinricPro.
-   - Los dispositivos creados (LED 1, LED 2, LED 3) aparecerán en la lista de dispositivos.
-8. **Prueba el control por voz:**
-   - Di: "Alexa, enciende LED 1" o "Ok Google, apaga LED 2".
-   - Observa cómo los LEDs responden al comando.
-   - También puedes usar la aplicación de SinricPro desde el móvil para controlar los dispositivos manualmente.
-
-## Posibles Mejoras
-
-- Agregar más dispositivos (hasta 10 switches o incluir otros tipos como termostatos, ventiladores, etc.).
-- Implementar control de brillo (dimmer) utilizando PWM y el tipo de dispositivo "Dimmer" en SinricPro.
-- Añadir sensores (temperatura, humedad, movimiento) y visualizarlos en el panel de SinricPro.
-- Configurar rutinas y automatizaciones en Alexa o Google Home (ej. "Apagar todas las luces al salir").
-- Utilizar la funcionalidad de "escenas" de SinricPro para activar varios dispositivos con un solo comando.
-- Agregar un botón físico para control manual como respaldo.
+- **Sin reporte de estado:** el ESP32 solo recibe órdenes; no informa a la nube cuando el estado cambia por otro medio. Añadir botones físicos y reportar el estado mantendría sincronizada la app.
+- **Solo interruptores:** SinricPro admite otros tipos de dispositivo, como atenuadores o sensores, con los que se podría controlar el brillo o publicar lecturas.
+- **Credenciales en el código:** las claves están en `#define` dentro del sketch. Conviene mantenerlas fuera del repositorio (por ejemplo, en un archivo de configuración ignorado por Git).
 
 ## Autor
 
-Pichardo Rico Cristian Eduardo
+**Cristian Eduardo Pichardo Rico**
+Egresado de la Licenciatura en Física, Facultad de Ciencias, UNAM
+GitHub: [@Edvard-Pichardo](https://github.com/Edvard-Pichardo)
+
+Distribuido bajo la licencia **MIT**. Consulta el archivo [LICENSE](../../LICENSE).
