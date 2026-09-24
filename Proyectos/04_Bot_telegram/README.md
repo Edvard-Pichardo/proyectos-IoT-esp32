@@ -1,126 +1,128 @@
-# Proyecto IoT 4: Control y Monitoreo con Telegram Bot
+<div align="center">
 
-![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue) ![Telegram Bot](https://img.shields.io/badge/API-Telegram%20Bot-26A5E4) ![WiFi](https://img.shields.io/badge/Comunicación-WiFi-yellow) ![Alarma](https://img.shields.io/badge/Funcionalidad-Alarma-red)
+# Proyecto 4: Control y Monitoreo con un Bot de Telegram
 
-## Descripción General
+![ESP32](https://img.shields.io/badge/Plataforma-ESP32-blue)
+![Telegram](https://img.shields.io/badge/Control-Bot%20de%20Telegram-26A5E4?logo=telegram&logoColor=white)
+![Arduino](https://img.shields.io/badge/IDE-Arduino-00979D?logo=arduino&logoColor=white)
 
-Este es el cuarto proyecto de la serie IoT, en el cual se implementa un **bot de Telegram** para controlar y monitorear dispositivos desde cualquier lugar mediante mensajes de texto. El ESP32 se conecta a WiFi y utiliza la API de Telegram para recibir comandos y enviar respuestas en tiempo real.
+El ESP32 se convierte en un **bot de Telegram** que permite controlar y monitorear dispositivos desde cualquier lugar con solo enviar mensajes de texto. Incluye control de LEDs, lectura de un potenciómetro y un sistema de **alarma de luz** con umbral configurable.
 
-**Comandos disponibles:**
-- `/led [1-5] on/off` → Enciende o apaga un LED específico.
-- `/pot` → Devuelve el valor actual del potenciómetro (0‑4095).
-- `/rangoAlarma [0-4095]` → Ajusta el umbral de la alarma de luz.
-- `/alarma on/off` → Activa o desactiva el sistema de alarma.
+</div>
 
-**Funcionamiento de la alarma:**  
-Cuando la alarma está activada, el bot monitorea continuamente el nivel de luz (fotoresistencia). Si el valor cae por debajo del umbral configurado, envía automáticamente un mensaje de alerta al usuario.
+[← Volver al índice de proyectos](../../README.md)
 
-Este proyecto demuestra cómo integrar dispositivos IoT con servicios de mensajería populares, facilitando la interacción remota sin necesidad de aplicaciones móviles dedicadas.
+---
 
-## Componentes Necesarios
+## Qué hace
 
-| Componente               | Cantidad | Notas                                           |
-|--------------------------|----------|-------------------------------------------------|
-| ESP32 (cualquier modelo) | 1        | Cliente WiFi y bot de Telegram                  |
-| Fotoresistencia (LDR)    | 1        | Por ejemplo, GL5528                             |
-| Potenciómetro            | 1        | 10kΩ                                            |
-| LEDs (colores variados)  | 5        | Con resistencias de 220Ω                       |
-| Resistencias de 220Ω     | 5        | Para los LEDs                                   |
-| Resistor de 10kΩ         | 1        | Para la fotoresistencia (divisor de tensión)    |
-| Protoboard y cables      | -        | Para las conexiones                             |
+- Enciende y apaga cinco LEDs individualmente.
+- Devuelve la lectura del potenciómetro bajo demanda.
+- Vigila el nivel de luz con una fotoresistencia y **envía una notificación automática** cuando cae por debajo de un umbral que el usuario puede ajustar.
 
-## Diagrama de Conexiones
+## Cómo funciona
 
-| Componente          | Pin del ESP32 | Notas                                                          |
-|---------------------|---------------|----------------------------------------------------------------|
-| LED1                | GPIO 14       | Ánodo al pin, cátodo a GND (con resistencia de 220Ω)          |
-| LED2                | GPIO 27       | Igual que LED1                                                 |
-| LED3                | GPIO 26       | Igual que LED1                                                 |
-| LED4                | GPIO 25       | Igual que LED1                                                 |
-| LED5                | GPIO 33       | Igual que LED1                                                 |
-| Fotoresistencia (LDR)| GPIO 34       | En serie con una resistencia de 10kΩ a GND; punto medio al pin; otro extremo a 3.3V |
-| Potenciómetro       | GPIO 35       | Pin central al ADC, extremos a 3.3V y GND                      |
+```mermaid
+sequenceDiagram
+    participant U as Usuario (Telegram)
+    participant T as API de Telegram
+    participant E as ESP32
 
-## Configuración del Entorno
+    U->>T: /led1 on
+    loop cada 500 ms
+        E->>T: getUpdates
+    end
+    T-->>E: nuevo mensaje
+    E->>E: enciende LED 1
+    E->>T: "El led 1 está encendido"
+    T-->>U: confirmación
 
-### Prerrequisitos
+    Note over E: Con la alarma activa, el ESP32 lee el LDR
+    E->>T: "¡Alarma! Hay poca luz"
+    T-->>U: notificación
+```
 
-1. **Crear un bot de Telegram:**
-   - Abre Telegram y busca **@BotFather**.
-   - Envía el comando `/newbot` y sigue las instrucciones para crear tu bot.
-   - Al finalizar, recibirás un **token de acceso** (por ejemplo, `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11`). Cópialo.
+> El ESP32 consulta a Telegram cada 500 ms (*polling*) mediante HTTPS, por lo que no necesita una IP pública ni abrir puertos en el router.
 
-2. **Obtener tu `chat_id` (opcional, pero útil para pruebas):**
-   - Envía un mensaje a tu bot.
-   - Visita la URL `https://api.telegram.org/bot<TU_TOKEN>/getUpdates` (reemplaza `<TU_TOKEN>` con tu token).
-   - Busca el campo `"chat":{"id": ...}`. Ese número es tu `chat_id`. No es estrictamente necesario en el código, pero puede ser útil para depuración.
+## Comandos
 
-### Arduino IDE
+| Comando | Descripción | Respuesta del bot |
+|---|---|---|
+| `/led1 on` … `/led5 on` | Enciende el LED indicado (1 a 5) | `El led N está encendido` |
+| `/led1 off` … `/led5 off` | Apaga el LED indicado | `El led N está apagado` |
+| `/pot` | Lee el potenciómetro | `El valor del potenciómetro es: <0–4095>` |
+| `/rangoAlarma <0–4095>` | Fija el umbral de la alarma de luz (por defecto, 500) | `El umbral de la alarma fue ajustado a <valor>` |
+| `/alarma on` | Activa la alarma | `Alarma activada` |
+| `/alarma off` | Desactiva la alarma | `Alarma desactivada` |
 
-1. Instala el soporte para ESP32 en el Arduino IDE (guía oficial).
-2. Instala las siguientes librerías desde el Gestor de Librerías:
-   - **UniversalTelegramBot** (de Brian Lough) – maneja la API de Telegram.
-   - **WiFi** (incluida con el core de ESP32).
-3. Selecciona la placa **ESP32 Dev Module** y el puerto COM correspondiente.
-4. Ajusta las credenciales WiFi y el token de tu bot en el código.
-5. Carga el programa al ESP32.
+> Si el comando es inválido, el bot lo indica: pide un LED entre 1 y 5, un estado `on`/`off`, o un valor entre 0 y 4095.
 
-## Explicación del Código
+### Ejemplo de conversación
 
-**Bibliotecas utilizadas:**
-- `WiFi.h`: Conexión a red WiFi.
-- `UniversalTelegramBot.h`: Cliente para la API de Telegram.
-- `WiFiClientSecure.h`: Conexión HTTPS para comunicarse con Telegram de forma segura.
+```text
+Tú:  /led1 on
+Bot: El led 1 está encendido
 
-**Configuración inicial:**
-- Se definen las credenciales WiFi y el token del bot.
-- Se crean los objetos `WiFiClientSecure` y `UniversalTelegramBot`.
-- En `setup()` se conecta a WiFi y se configura el cliente HTTPS en modo inseguro (`setInsecure()`) para evitar problemas con certificados (común en ESP32).
+Tú:  /pot
+Bot: El valor del potenciómetro es: 2048        (valor ilustrativo)
 
-**Función `handleNewMessages(int numNewMessages)`:**
-- Procesa cada nuevo mensaje recibido.
-- Analiza el texto y ejecuta el comando correspondiente:
-  - `/led`: Extrae el número del LED y la acción, y cambia el estado del LED. Responde con confirmación.
-  - `/pot`: Lee el valor analógico del potenciómetro y lo envía como respuesta.
-  - `/rangoAlarma`: Valida el valor ingresado (0-4095) y actualiza el umbral.
-  - `/alarma on/off`: Activa o desactiva la alarma.
+Tú:  /rangoAlarma 800
+Bot: El umbral de la alarma fue ajustado a 800
 
-**Bucle `loop()`:**
-- Cada 500 ms (`botRequestDelay`) consulta si hay nuevos mensajes mediante `bot.getUpdates()`.
-- Si hay mensajes nuevos, llama a `handleNewMessages()`.
-- Si la alarma está activada, lee continuamente el valor de la fotoresistencia. Si el nivel de luz es inferior al umbral, envía una notificación de alerta.
+Tú:  /alarma on
+Bot: Alarma activada
 
-**Nota:** La alarma envía un mensaje cada vez que se cumple la condición en el `loop()`. Para evitar spam, sería recomendable añadir una bandera que evite enviar múltiples notificaciones consecutivas hasta que la condición cambie.
+     ...la luz baja del umbral...
+Bot: ¡Alarma! Hay poca luz
+```
 
-## Instrucciones de Uso
+## Componentes y conexiones
 
-1. **Arma el circuito** según el diagrama de conexiones.
-2. **Crea tu bot de Telegram** con BotFather y obtén el token.
-3. **Configura las credenciales WiFi** y el token en el código.
-4. **Carga el programa** al ESP32.
-5. **Abre el monitor serie** (115200 baudios) para ver mensajes de depuración.
-6. **Inicia una conversación con tu bot** en Telegram.
-7. **Prueba los comandos:**
-   - Enviar `/led 1 on` → Enciende LED1.
-   - Enviar `/led 2 off` → Apaga LED2.
-   - Enviar `/pot` → Recibirás el valor del potenciómetro.
-   - Enviar `/rangoAlarma 700` → Establece el umbral en 700.
-   - Enviar `/alarma on` → Activa la alarma.
-   - Cubre la fotoresistencia para simular oscuridad y verás el mensaje de alerta.
-8. **Observa las respuestas del bot** en tiempo real.
+Usa el [mapa de pines compartido](../../media/PinMapEsp32IoT.jpg) del repositorio.
 
-## Posibles Mejoras
+| Componente | Pin |
+|---|:-:|
+| LED 1 – 5 | GPIO 14, 27, 26, 25, 33 |
+| Fotoresistencia (LDR) | GPIO 34 |
+| Potenciómetro | GPIO 35 |
 
-- Añadir un sistema de autenticación para restringir el bot a usuarios autorizados (comparando `chat_id`).
-- Implementar un debounce para evitar notificaciones repetitivas de la alarma.
-- Agregar más comandos: control de servos, lectura de temperatura, etc.
-- Utilizar el bot para enviar notificaciones periódicas (por ejemplo, cada hora) con el estado de los sensores.
-- Integrar con servicios como IFTTT o Zapier para acciones adicionales.
-- Almacenar la configuración (umbral, estado de la alarma) en EEPROM para que persista tras reinicios.
+## Cómo probarlo
+
+**1. Crea tu bot.** En Telegram, abre una conversación con [@BotFather](https://t.me/BotFather), envía `/newbot` y guarda el **token** que te entrega.
+
+**2. Librerías** (Gestor de bibliotecas del Arduino IDE):
+
+- `UniversalTelegramBot`
+- `ArduinoJson` (dependencia de la anterior)
+
+**3. Configuración.** Edita las credenciales en el sketch:
+
+```cpp
+const char* ssid     = "Nombre_red";
+const char* password = "contraseña_red";
+const char* botToken = "token_del_bot";   // Token de BotFather
+```
+
+**4. Carga el sketch**, abre el Monitor Serie a 115200 baudios y, una vez conectado a WiFi, escríbele a tu bot en Telegram.
+
+> Envía primero cualquier comando al bot: así el ESP32 guarda tu chat y sabe a dónde mandar las notificaciones de la alarma.
+
+## Limitaciones y mejoras posibles
+
+- **Sin validación de usuario:** el bot responde a cualquier persona que lo encuentre en Telegram. Se puede restringir comparando el `chat_id` con uno autorizado, como hace el [sistema de seguridad con ESP32 y Telegram](https://github.com/Edvard-Pichardo/esp32-sistema-de-seguridad-para-una-habitacion) de este mismo autor.
+- **Conexión sin verificar el certificado:** se usa `setInsecure()` por simplicidad. Cargar el certificado raíz de Telegram permitiría validar el servidor.
+- **Alarma repetitiva:** mientras la luz esté bajo el umbral, se envía una notificación en cada ciclo. Una bandera o un tiempo de espera entre avisos evitaría saturar el chat y los límites de Telegram.
+- **Formato del comando de LEDs:** el número va pegado al comando (`/led1 on`); un analizador de texto más flexible aceptaría también variantes como `/led 1 on`.
 
 ## Autor
 
-Pichardo Rico Cristian Eduardo
+**Cristian Eduardo Pichardo Rico**
+
+Egresado de la Licenciatura en Física, Facultad de Ciencias, UNAM
+GitHub: [@Edvard-Pichardo](https://github.com/Edvard-Pichardo)
+
+Distribuido bajo la licencia **MIT**. Consulta el archivo [LICENSE](../../LICENSE).
+
 
 
 
